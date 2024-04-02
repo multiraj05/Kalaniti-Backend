@@ -4,7 +4,6 @@ const { response } = require("../utils/response")
 const fs = require("fs")
 const jwt = require("jsonwebtoken"); 
 const bcrypt = require("bcryptjs");
-// const { deleteFile } = require("../utils/deleteFile");
 
 exports.addAdmin=async(req,res)=>{
     try {
