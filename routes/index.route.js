@@ -1,0 +1,26 @@
+const express = require('express');
+const route = express.Router();
+
+const cartRoute = require("./cart.route");
+route.use("/cart", cartRoute);
+
+const userRoute = require("./user.route");
+route.use("/user", userRoute);
+
+const productRoute = require("./product.route");
+route.use("/product", productRoute);
+
+const categoryRoute = require("./category.route");
+route.use("/category", categoryRoute);
+
+const adminRoute = require("./admin.route");
+route.use("/admin", adminRoute);
+
+const orderRoute = require("./order.route");
+route.use("/order", orderRoute);
+
+const paymentRoute = require("./payment.route");
+route.use("/payment", paymentRoute);
+
+
+module.exports = route;
