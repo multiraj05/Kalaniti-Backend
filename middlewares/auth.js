@@ -7,6 +7,8 @@ exports.checkUserAuth = async (req, res, next) => {
   try {
     const Authorization = req.get("Authorization");
 
+    console.log("Authorization",Authorization);
+
     if (!Authorization || Authorization == undefined) {
       return response(res, 401, { message: "Oops ! You are not Authorized" })
     }
