@@ -267,7 +267,7 @@ exports.addAddress = async (req, res) => {
   try {
     console.log(req.body);
     const { userId } = req.query;
-    const { firstName ,pinCode, state, country, city, address, phone } = req.body;
+    const { firstName , pinCode, state, country, city, address, phone } = req.body;
 
     console.log("User Id :- ", userId);
 
