@@ -311,7 +311,7 @@ exports.addAddress = async (req, res) => {
       lastName: user.lastName,
       email: user.email,
       address: user.address,
-    };
+    }
 
     console.log("user Address Data :- ",userData);
 
