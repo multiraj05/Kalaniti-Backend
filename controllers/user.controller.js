@@ -303,21 +303,20 @@ exports.addAddress = async (req, res) => {
 
     user.address.push(newAddress);
 
-    await user.save();
-    
-    const userData = {
-      _id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      address: user.address,
-    }
+    const updatedUser = await user.save();
+    console.log("Updated user:", updatedUser);
 
-    // console.log("user Address Data :- ",userData);
+    // Generate token with updated user data
+    const payload = {
+      _id: updatedUser._id,
+      firstName: updatedUser.firstName,
+      lastName: updatedUser.lastName,
+      email: updatedUser.email,
+      address: updatedUser.address,
+    };
 
-    const token = jwt.sign(userData, process.env.JWT_SECRET, {
-      expiresIn: "1y",
-    });
+    const token = jwt.sign(payload, process.env.JWT_SECRET);
+    // console.log("Generated token:", token);
 
     return response(res, 200, {
       status: true,
