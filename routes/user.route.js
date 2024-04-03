@@ -2,16 +2,10 @@ const express = require('express');
 const route = express.Router();
 const UserController = require('../controllers/user.controller');
 const {checkUserAuth} = require('../middlewares/auth');
-
-const multer = require("multer");
-const storage = require("../utils/multer");
-const upload = multer({storage});
-
 const checkKey = require("../utils/checkAccessKey");
-
-// Route Level Middleware - To Protect Routes
-route.use('/changepassword', checkUserAuth);
-route.use('/loggeduser', checkUserAuth);
+const storage = require("../utils/multer");
+const multer = require("multer");
+const upload = multer({storage});
 
 // user crud route
 route.post('/register',upload.any("images"),UserController.userRegistration);
@@ -21,7 +15,7 @@ route.put('/update',UserController.updateUser);
 route.delete('/delete',UserController.deleteUser);
 
 // user address Routes
-route.post('/add',checkUserAuth,checkKey(),UserController.addAddress);
+route.post('/add',checkUserAuth,UserController.addAddress);
 route.patch('/updateAddress',UserController.updateAddress);
 route.delete('/deleteAddress',checkUserAuth,checkKey(),UserController.deleteAddress);
 
