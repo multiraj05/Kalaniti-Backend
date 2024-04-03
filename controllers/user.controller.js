@@ -272,7 +272,7 @@ exports.addAddress = async (req, res) => {
     console.log("User Id :- ", userId);
 
     if (!userId || !firstName || !pinCode || !state || !country || !city || !address || !phone) {
-      return response(res, 400, {
+      return response(res, 201, {
         status: false, 
         message: "All address fields are required"
       });
@@ -280,8 +280,10 @@ exports.addAddress = async (req, res) => {
 
     const user = await userInfo.findById(userId);
 
+    console.log("user",user);
+
     if (!user) {
-      return response(res, 404,{
+      return response(res, 201,{
          status: false,
          message: "User not found"
       });
@@ -301,12 +303,10 @@ exports.addAddress = async (req, res) => {
       phone,
     };
 
-    user.address.push(newAddress);
+    user?.address?.push(newAddress);
 
     const updatedUser = await user.save();
-    console.log("Updated user:", updatedUser);
 
-    // Generate token with updated user data
     const payload = {
       _id: updatedUser._id,
       firstName: updatedUser.firstName,
@@ -315,8 +315,10 @@ exports.addAddress = async (req, res) => {
       address: updatedUser.address,
     };
 
+    console.log(payload);
+
     const token = jwt.sign(payload, process.env.JWT_SECRET);
-    // console.log("Generated token:", token);
+    console.log("Generated token:", token);
 
     return response(res, 200, {
       status: true,
@@ -403,13 +405,13 @@ exports.deleteAddress = async (req, res) => {
     const { userId, addressId } = req.query;
 
     if (!userId || !addressId) {
-      return response(res, 400, { status: false, message: "All fields are required" });
+      return response(res, 201, { status: false, message: "All fields are required" });
     }
 
     const user = await userInfo.findById(userId);
 
     if (!user) {
-      return response(res, 404, { status: false, message: "User not found" });
+      return response(res, 401, { status: false, message: "User not found" });
     }
 
     const addressIndex = user.address.findIndex(
@@ -419,24 +421,24 @@ exports.deleteAddress = async (req, res) => {
     console.log(addressIndex);
 
     if (addressIndex === -1) {
-      return response(res, 404, { status: false, message: "Address not found" });
+      return response(res, 401, { status: false, message: "Address not found" });
     }
 
     const deletedAddress = user.address[addressIndex];
 
     user.address.splice(addressIndex, 1);
 
-    await user.save();
+    const updatedUser =await user.save();
 
-    const userData = {
-      _id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      address: user.address,
+    const payload = {
+      _id: updatedUser._id,
+      firstName: updatedUser.firstName,
+      lastName: updatedUser.lastName,
+      email: updatedUser.email,
+      address: updatedUser.address,
     };
 
-    const token = jwt.sign(userData, process.env.JWT_SECRET, {
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: "1y",
     });
 

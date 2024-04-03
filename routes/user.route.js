@@ -23,7 +23,7 @@ route.post('/reset-password',checkKey(),UserController.userPasswordReset);
 route.post('/changepassword', UserController.changeUserPassword);
 route.post('/add',checkUserAuth,UserController.addAddress);
 route.patch('/updateAddress',UserController.updateAddress);
-route.delete('/deleteAddress',UserController.deleteAddress);
+route.delete('/deleteAddress',checkUserAuth,UserController.deleteAddress);
 route.get('/getUser', UserController.getUser);
 route.put('/update',UserController.updateUser);
 route.delete('/delete',UserController.deleteUser);
