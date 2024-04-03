@@ -16,7 +16,7 @@ route.delete('/delete',UserController.deleteUser);
 
 // user address Routes
 route.post('/add',checkUserAuth,UserController.addAddress);
-route.patch('/updateAddress',UserController.updateAddress);
+route.patch('/updateAddress',checkUserAuth,UserController.updateAddress);
 route.delete('/deleteAddress',checkUserAuth,checkKey(),UserController.deleteAddress);
 
 // user route to set and reset password

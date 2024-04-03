@@ -220,19 +220,17 @@ exports.updateUser = async (req, res) => {
     user.pinCode = pinCode || user.pinCode;
     user.country = country || user.country;
 
-    user = await user.save();
+    const userUpdateData = await user.save();
 
-    const userData = {
-      _id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      address: user.address,
+    const payload = {
+      _id: userUpdateData._id,
+      firstName: userUpdateData.firstName,
+      lastName: userUpdateData.lastName,
+      email: userUpdateData.email,
+      address: userUpdateData.address,
     };
 
-    const token = jwt.sign(userData, process.env.JWT_SECRET, {
-      expiresIn: "1y",
-    });
+    const token = jwt.sign(payload, process.env.JWT_SECRET);
 
     return response(res, 200, { status: true, message: "User updated successfully", token: token });
   } catch (error) {
@@ -372,19 +370,17 @@ exports.updateAddress = async (req, res) => {
       phone,
     };
 
-    await user.save();
+    const userUpdateData = await user.save();
 
-    const userData = {
-      _id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      address: user.address,
+    const payload = {
+      _id: userUpdateData._id,
+      firstName: userUpdateData.firstName,
+      lastName: userUpdateData.lastName,
+      email: userUpdateData.email,
+      address: userUpdateData.address,
     };
 
-    const token = jwt.sign(userData, process.env.JWT_SECRET, {
-      expiresIn: "1y",
-    });
+    const token = jwt.sign(payload, process.env.JWT_SECRET);
 
     return response(res, 200, {
       status: true,
