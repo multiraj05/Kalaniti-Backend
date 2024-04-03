@@ -99,7 +99,6 @@ exports.userLogin = async (req, res) => {
   }
 };
 
-
 // --------------------- end user login & registration ----------------------------
 
 // --------------------- start user update,delete,show ----------------------------
@@ -314,7 +313,7 @@ exports.addAddress = async (req, res) => {
       address: user.address,
     }
 
-    console.log("user Address Data :- ",userData);
+    // console.log("user Address Data :- ",userData);
 
     const token = jwt.sign(userData, process.env.JWT_SECRET, {
       expiresIn: "1y",
