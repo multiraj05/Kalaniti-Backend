@@ -11,7 +11,7 @@ exports.addAdmin=async(req,res)=>{
         console.log(req.file);
 
         if (!req.body.name || !req.body.email || !req.body.password) {
-          return response( res, 400, { status: false, message: "Name, email, and password are required" });
+          return response( res, 201, { status: false, message: "Name, email, and password are required" });
         }
 
         const salt = await bcrypt.genSalt(10);

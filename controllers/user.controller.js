@@ -4,21 +4,25 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { response } = require("../utils/response");
 const transporter = require("../utils/emailConfig.js");
+const { deleteFile } = require("../utils/deleteFile.js");
+const {uniqueId} = require('../utils/generateCode.js')
 
 // --------------------- start user login & registration --------------------------
 
 exports.userRegistration = async (req, res) => {
+  console.log(req.body);
+  console.log(req.file);
   try {
     const { firstName, lastName, email, password, phone ,gender} = req.body;
 
     if (!password) {
-      return response(res, 400, { status: false, message: "All fields are required"});
+      return response(res, 201, { status: false, message: "All fields are required"});
     }
 
     const emailCheck = await userInfo.findOne({ email });
 
     if (emailCheck){
-      return response(res, 400, { status: false, message: "Email already exist"});
+      return response(res, 201, { status: false, message: "Email already exist"});
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -32,6 +36,7 @@ exports.userRegistration = async (req, res) => {
       user.phone = phone
       user.address = []
       user.gender = gender
+      user.uniqueId = uniqueId(8)
 
       if (req.file) {
         user.image = req.file.path;
@@ -64,13 +69,13 @@ exports.userLogin = async (req, res) => {
       console.log(user);
 
       if (!user) {
-        return response(res, 400, { status: false, message: "User not found" });
+        return response(res, 401, { status: false, message: "User not found" });
       }
 
       const isPasswordValid = await bcrypt.compareSync(password, user.password);
 
       if (!isPasswordValid) {
-        return response(res, 401, { status: false, message: "Invalid password" });
+        return response(res, 201, { status: false, message: "Invalid password" });
       }
 
       const userData = {
@@ -174,6 +179,7 @@ exports.getUser = async (req, res) => {
 };
 
 exports.updateUser = async (req, res) => {
+  console.log(req.file);
   try {
     const { userId } = req.query;
     const {
@@ -187,6 +193,7 @@ exports.updateUser = async (req, res) => {
       phone,
       country,
       state,
+      gender
     } = req.body;
 
     let hashedPassword;
@@ -199,11 +206,16 @@ exports.updateUser = async (req, res) => {
 
     let user = await userInfo.findById(userId);
     if (!user) {
-      return response(res, 404, {
+      return response(res, 401, {
         status: false, 
         message: "User not found"
       });
     }
+
+    if (req.file) {
+      deleteFile(user.image)
+      user.image = req.file.path
+  }
 
     user.firstName = firstName || user.firstName;
     user.lastName = lastName || user.lastName;
@@ -219,6 +231,9 @@ exports.updateUser = async (req, res) => {
     user.state = state || user.state;
     user.pinCode = pinCode || user.pinCode;
     user.country = country || user.country;
+    user.image = req?.file?.path || user.image
+    user.gender = gender || user.gender
+    user.uniqueId = user.uniqueId
 
     const userUpdateData = await user.save();
 
@@ -228,6 +243,9 @@ exports.updateUser = async (req, res) => {
       lastName: userUpdateData.lastName,
       email: userUpdateData.email,
       address: userUpdateData.address,
+      image: userUpdateData.image,
+      gender: userUpdateData.gender,
+      uniqueId : user.uniqueId
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET);
@@ -245,7 +263,7 @@ exports.deleteUser = async (req, res) => {
 
     const existingUser = await userInfo.findById(userId);
     if (!existingUser) {
-      return response(res, 404, { status: false, message: "User not found" });
+      return response(res, 401, { status: false, message: "User not found" });
     }
 
     await userInfo.findByIdAndDelete(userId);
@@ -342,7 +360,7 @@ exports.updateAddress = async (req, res) => {
     const user = await userInfo.findById(userId);
 
     if (!user) {
-      return response(res, 404, {
+      return response(res, 401, {
         status: false, 
         message: "User not found"
       })
@@ -353,7 +371,7 @@ exports.updateAddress = async (req, res) => {
     );
 
     if (addressIndex === -1) {
-      return response(res, 404, {
+      return response(res, 401, {
         status: false, 
         message: "Address not found"
       })

@@ -7,15 +7,15 @@ exports.createOrder = async (req, res) => {
         const { cartId, userId,totalPrice } = req.query;
 
         if (!cartId || !userId ||!totalPrice ) {
-            return response( res, 400, { status: false, message: 'cartId, userId, and totalPrice are required' });
+            return response( res, 201, { status: false, message: 'cartId, userId, and totalPrice are required' });
         }
         const user = await userInfo.findById(userId);
         if (!user) {
-            return response( res, 404, { status: false, message: 'User not found' });
+            return response( res, 401, { status: false, message: 'User not found' });
         }
         const cart = await cartDetails.findById(cartId);
         if (!cart) {
-            return response( res, 404, { status: false, message: 'Cart not found' });
+            return response( res, 401, { status: false, message: 'Cart not found' });
         }
 
         const order = new Order({
@@ -26,7 +26,7 @@ exports.createOrder = async (req, res) => {
 
         await order.save();
 
-        return response( res, 201, { status: true, message: 'Order created successfully', order });
+        return response( res, 200, { status: true, message: 'Order created successfully', order });
     } catch (error) {
         console.error('Error creating order:', error);
         return response( res, 500, { status: false, message: 'Internal Server Error' });
@@ -43,7 +43,7 @@ exports.getOrders = async (req, res) => {
         if (orderId) {
             const order = await Order.findById(orderId);
             if (!order) {
-                return response( res, 404, { status: false, message: 'Order not found' });
+                return response( res, 401, { status: false, message: 'Order not found' });
             }
             return response( res, 200, { status: true, message: 'Order retrieved successfully', order });
         } else {
@@ -103,12 +103,12 @@ exports.updateOrderStatus = async (req, res) => {
     const { status } = req.body;
 
     if (!orderId || !status) {
-      return response( res, 400, { status: 'error', message: 'Order ID and status are required' });
+      return response( res, 201, { status: 'error', message: 'Order ID and status are required' });
     }
 
     const validStatus = ['pending', 'processing', 'shipped', 'delivered'];
     if (!validStatus.includes(status)) {
-      return response( res, 400, { status: 'error', message: 'Invalid status' });
+      return response( res, 201, { status: 'error', message: 'Invalid status' });
     }
 
     const updatedOrder = await Order.findByIdAndUpdate(
@@ -118,7 +118,7 @@ exports.updateOrderStatus = async (req, res) => {
     );
 
     if (!updatedOrder) {
-      return response( res, 404, { status: 'error', message: 'Order not found' });
+      return response( res, 401, { status: 'error', message: 'Order not found' });
     }
 
     return response( res, 200, { status: 'success', message: 'Order status updated successfully', order: updatedOrder });

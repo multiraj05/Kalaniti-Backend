@@ -8,11 +8,11 @@ const multer = require("multer");
 const upload = multer({storage});
 
 // user crud route
-route.post('/register',upload.any("images"),UserController.userRegistration);
+route.post('/register',upload.single("image"),UserController.userRegistration);
 route.post('/login',checkKey(),UserController.userLogin);
 route.get('/getUser', UserController.getUser);
-route.put('/update',UserController.updateUser);
-route.delete('/delete',UserController.deleteUser);
+route.patch('/update',checkUserAuth,upload.single("image"),UserController.updateUser);
+route.delete('/delete',checkUserAuth,UserController.deleteUser);
 
 // user address Routes
 route.post('/add',checkUserAuth,UserController.addAddress);

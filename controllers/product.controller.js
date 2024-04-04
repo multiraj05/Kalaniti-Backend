@@ -18,11 +18,11 @@ exports.addProduct = async (req, res) => {
     const missingFields = requiredFields.filter((field) => !req.body[field]);
 
     if (missingFields.length > 0) {
-      return response(res, 400, { message: "Missing required fields: " + missingFields.join(", ") });
+      return response(res, 201, { message: "Missing required fields: " + missingFields.join(", ") });
     }
 
     if (!req.files || req.files.length === 0) {
-      return response(res, 400, { message: "Please upload at least one image" });
+      return response(res, 201, { message: "Please upload at least one image" });
     }
 
     const imagePaths = req.files.map((file) => file.path);
@@ -30,7 +30,7 @@ exports.addProduct = async (req, res) => {
     let categoryIdObj;
     if (req.body.categoryId) {
       if (!ObjectId.isValid(req.body.categoryId)) {
-        return response(res, 400, { message: "Invalid category ID" });
+        return response(res, 201, { message: "Invalid category ID" });
       }
       categoryIdObj = new ObjectId(req.body.categoryId);
     }
@@ -47,7 +47,7 @@ exports.addProduct = async (req, res) => {
 
     await productData.save();
 
-    return response(res, 201, { message: "Product added successfully", data: productData });
+    return response(res, 200, { message: "Product added successfully", data: productData });
   } catch (error) {
     console.error(error);
     return response(res, 500, { message: "Internal server error" });
@@ -139,13 +139,13 @@ exports.updateProduct = async (req, res) => {
     const updates = req.body;
 
     if (!productId) {
-      return response( res, 400, { status: 'error', message: 'Product ID is required' });
+      return response( res, 201, { status: 'error', message: 'Product ID is required' });
     }
 
     const product = await productInfo.findById(productId);
 
     if (!product) {
-      return response( res, 404, { status: 'error', message: 'Product not found' });
+      return response( res, 401, { status: 'error', message: 'Product not found' });
     }
 
     Object.keys(updates).forEach(key => {
@@ -168,7 +168,7 @@ exports.deleteProduct = async (req, res) => {
       const deletedProduct = await productInfo.findByIdAndDelete(productId);
 
       if (!deletedProduct) {
-          return response( res, 404, { status: "error", message: "Product not found!" });
+          return response( res, 401, { status: "error", message: "Product not found!" });
       }
 
      return response( res, 200,{ status: "success", message: "Product deleted successfully!", deletedProduct });

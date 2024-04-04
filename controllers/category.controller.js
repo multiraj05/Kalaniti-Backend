@@ -4,9 +4,9 @@ const mongoose=require("mongoose")
 
 exports.createCategory = async (req, res) => {
     try {
-        const { name ,image} = req.body;
+        const { name} = req.body;
         if (!name) {
-            return response( res, 400, { status: false, message: 'Category name is required' });
+            return response( res, 201, { status: false, message: 'Category name is required' });
         }
 
         const category = new categoryInfo();
@@ -107,7 +107,7 @@ exports.updateCategory = async (req, res) => {
   
       const category = await categoryInfo.findById(id);
       if (!category) {
-        throw new Error("Category not found!");
+        return response( res, 401, { success: false, message: "Category not found!" });
       }
   
       await categoryInfo.updateOne({ _id: id }, req.body);
@@ -130,7 +130,7 @@ exports.deleteCategory = async (req, res) => {
       const deletedCategory = await categoryInfo.findByIdAndDelete(id);
   
       if (!deletedCategory) {
-        return response( res, 404, { success: false, message: "Category not found!" });
+        return response( res, 401, { success: false, message: "Category not found!" });
       }
   
       return response( res, 200, { success: true, message: "Category deleted successfully!", deletedCategory });

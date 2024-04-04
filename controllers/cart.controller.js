@@ -9,31 +9,31 @@ exports.addToCart = async (req, res) => {
     console.log("req.query", req.query);
 
     if (!productId || !userId || !quantity || !size) {
-      return response( res, 400 ,{ status: false ,  message: "Missing required parameters" });
+      return response( res, 201 ,{ status: false ,  message: "Missing required parameters" });
     }
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return response( res, 400 ,{ status: false ,  message: "Invalid user ID" });
+      return response( res, 401 ,{ status: false ,  message: "Invalid user ID" });
     }
     if (!size) {
-      return response( res, 400 ,{ status: false ,  message: "Size is required" });
+      return response( res, 201 ,{ status: false ,  message: "Size is required" });
     }
-    let oldCart = await cartDetails.findOne({ productId, userId });
+    let oldProduct = await cartDetails.findOne({ productId, userId });
 
-    if (oldCart) {
+    if (oldProduct) {
 
-      oldCart.size = size;
-      oldCart.quantity = oldCart.quantity + parseInt(quantity);
-      await oldCart.save();
-      return response( res, 200,{status: true , message: "Product added to cart", cart: oldCart });
+      oldProduct.size = size;
+      oldProduct.quantity = oldProduct.quantity + parseInt(quantity);
+      oldProduct.totalCount = calculateTotalCount(oldProduct); 
+      await oldProduct.save();
+      return response( res, 200,{status: true , message: "Product added to cart", cart: oldProduct });
     }
 
-    const cart = new cartDetails({
-      productId,
-      userId,
-      size,
-      quantity: parseInt(quantity),
-    });
-
+    const cart = new cartDetails()
+      cart.productId=productId,
+      cart.userId=userId,
+      cart.size=size,
+      cart.quantity= parseInt(quantity),
+      cart.totalCount=0
     await cart.save();
 
     console.log("Product added to cart:", cart);
@@ -126,21 +126,20 @@ exports.getCart = async (req, res) => {
 exports.changeqty = async (req, res) => {
   try {
     const { cartId, quantity } = req.query;
-    // console.log(req.query);
 
     const cartData = await cartDetails.findById(cartId);
     if (!cartData) {
-      return response( res, 404, { status: false, message: "Cart detail not found" });
+      return response( res, 401, { status: false, message: "Cart detail not found" });
     }
 
     const product = await productInfo.findById(cartData.productId);
     if (!product) {
-      return response( res, 404, { status: false, message: "Product not found" });
+      return response( res, 401, { status: false, message: "Product not found" });
     }
 
     const newQty = cartData.quantity + Number(quantity);
     if (newQty < 0) {
-      return response( res, 400, { status: false, message: "Quantity cannot be less than 0" });
+      return response( res, 201, { status: false, message: "Quantity cannot be less than 0" });
     }
 
     const total = newQty * product.price2;
@@ -168,7 +167,7 @@ exports.updateData = async (req, res) => {
 
     const category = await cartDetails.findById(id);
     if (!category) {
-      throw new response( res, 404, { success: false, message: "Category not found!"});
+      throw new response( res, 401, { success: false, message: "Category not found!"});
     }
 
     await cartDetails.updateOne({ _id: id }, req.body);
@@ -191,7 +190,7 @@ exports.deleteData = async (req, res) => {
     const deletedCart = await cartDetails.findByIdAndDelete(id);
 
     if (!deletedCart) {
-      return response( res, 404, { success: false, message: "Cart not found!" });
+      return response( res, 401, { success: false, message: "Cart not found!" });
     }
 
     return response( res, 200, { success: true, message: "Cart data deleted successfully!", deletedCart });
