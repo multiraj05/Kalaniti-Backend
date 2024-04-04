@@ -503,7 +503,7 @@ exports.changeUserPassword = async (req, res) => {
     })
   }
 };
-
+  
 exports.sendUserPasswordResetEmail = async (req, res) => {
   const { email } = req.body;
 
