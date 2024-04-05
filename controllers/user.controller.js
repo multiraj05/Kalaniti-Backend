@@ -329,11 +329,15 @@ exports.addAddress = async (req, res) => {
     const updatedUser = await user.save();
 
     const payload = {
-      _id: updatedUser._id,
-      firstName: updatedUser.firstName,
-      lastName: updatedUser.lastName,
-      email: updatedUser.email,
-      address: updatedUser.address,
+        _id: updatedUser._id,
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+        email: updatedUser.email,
+        address: updatedUser.address,
+        image: updatedUser.image,
+        phone: updatedUser.phone,
+        gender: updatedUser.gender,
+        uniqueId: updatedUser.uniqueId
     };
 
     console.log(payload);
