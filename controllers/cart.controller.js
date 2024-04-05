@@ -52,7 +52,6 @@ exports.getCart = async (req, res) => {
     const userId = req.query.userId;
     const search = req.query.search || '';
     const fieldsToSearch = ["userId"];
-    console.log("userId", userId);
 
     const matchQuery = {
       userId:new  mongoose.Types.ObjectId(userId),

@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema(
         type:String,
         enum:['Male','Female']
     },
+    phone: {
+      type: Number,
+      required: true,
+    },
     address: [
       {
         firstName: {
@@ -38,12 +42,12 @@ const userSchema = new mongoose.Schema(
           type: String,
           required: true,
         },
-        phone: {
-          type: Number,
-          required: true,
-        },
         state: {
           type: String,
+          required: true,
+        },
+        phone: {
+          type: Number,
           required: true,
         },
         country: {

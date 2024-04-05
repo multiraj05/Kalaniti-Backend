@@ -116,7 +116,6 @@ exports.getProducts = async (req, res) => {
 
       const Result = await productInfo.aggregate(aggregationPipeline);
       const paginatedResults = Result || [];
-      console.log('www',paginatedResults);
 
       return response( res, 200, {
           status: "success",

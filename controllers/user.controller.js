@@ -15,7 +15,7 @@ exports.userRegistration = async (req, res) => {
   try {
     const { firstName, lastName, email, password, phone ,gender} = req.body;
 
-    if (!password) {
+    if (!password || !firstName || !lastName || !email || !phone || !gender) {
       return response(res, 201, { status: false, message: "All fields are required"});
     }
 
@@ -36,7 +36,7 @@ exports.userRegistration = async (req, res) => {
       user.phone = phone
       user.address = []
       user.gender = gender
-      user.uniqueId = uniqueId(8)
+      user.uniqueId = uniqueId(8)``
 
       if (req.file) {
         user.image = req.file.path;
@@ -84,11 +84,13 @@ exports.userLogin = async (req, res) => {
         lastName: user.lastName,
         email: user.email,
         address: user.address,
+        image: user.image,
+        phone: user.phone,
+        gender: user.gender,
+        uniqueId: user.uniqueId
       };
 
-      const token = jwt.sign(userData, process.env.JWT_SECRET, {
-        expiresIn: "1y",
-      });
+      const token = jwt.sign(userData, process.env.JWT_SECRET);
 
       return response(res, 200, { status: true, message: "Login successful", token: token });
     } else {
@@ -114,6 +116,7 @@ exports.getUser = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = page * limit;
     const { userId } = req.query;
+    console.log("userID = ",req.query);
     const search = req.query.search;
     const fieldsToSearch = ["firstName", "lastName"];
 
@@ -238,14 +241,16 @@ exports.updateUser = async (req, res) => {
     const userUpdateData = await user.save();
 
     const payload = {
-      _id: userUpdateData._id,
-      firstName: userUpdateData.firstName,
-      lastName: userUpdateData.lastName,
-      email: userUpdateData.email,
-      address: userUpdateData.address,
-      image: userUpdateData.image,
-      gender: userUpdateData.gender,
-      uniqueId : user.uniqueId
+        _id: userUpdateData._id,
+        firstName: userUpdateData.firstName,
+        lastName: userUpdateData.lastName,
+        email: userUpdateData.email,
+        address: userUpdateData.address,
+        image: userUpdateData.image,
+        phone: userUpdateData.phone,
+        gender: userUpdateData.gender,
+        uniqueId: userUpdateData.uniqueId
+
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET);
