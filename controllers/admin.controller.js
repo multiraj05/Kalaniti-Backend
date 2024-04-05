@@ -64,6 +64,7 @@ exports.adminLogin = async (req, res, next) => {
         role: admin.role,
         isActive: admin.isActive,
       };
+      
       console.log("payload", payload);
 
       const token = jwt.sign(payload, process.env.JWT_SECRET);
