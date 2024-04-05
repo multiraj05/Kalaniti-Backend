@@ -36,7 +36,7 @@ exports.userRegistration = async (req, res) => {
       user.phone = phone
       user.address = []
       user.gender = gender
-      user.uniqueId = uniqueId(8)``
+      user.uniqueId = uniqueId(8)
 
       if (req.file) {
         user.image = req.file.path;
@@ -71,6 +71,9 @@ exports.userLogin = async (req, res) => {
       if (!user) {
         return response(res, 401, { status: false, message: "User not found" });
       }
+
+      console.log("user login password", password);
+      console.log("user password", user.password);
 
       const isPasswordValid = await bcrypt.compareSync(password, user.password);
 
@@ -250,7 +253,6 @@ exports.updateUser = async (req, res) => {
         phone: userUpdateData.phone,
         gender: userUpdateData.gender,
         uniqueId: userUpdateData.uniqueId
-
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET);
