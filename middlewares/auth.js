@@ -18,9 +18,9 @@ exports.checkUserAuth = async (req, res, next) => {
       process.env.JWT_SECRET
     );
 
-    const admin = await userInfo.findById(decodeToken._id);
+    const user = await userInfo.findById(decodeToken._id);
 
-    req.admin = admin;
+    req.user = user;
     next();
   } catch (error) {
     response(res, 500, error)

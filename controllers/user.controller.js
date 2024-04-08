@@ -185,9 +185,9 @@ exports.getUser = async (req, res) => {
 };
 
 exports.updateUser = async (req, res) => {
-  console.log(req.file);
+  console.log("req.file = ",req.file);
+  console.log(req.user);
   try {
-    const { userId } = req.query;
     const {
       firstName,
       lastName,
@@ -208,9 +208,7 @@ exports.updateUser = async (req, res) => {
       hashedPassword = await bcrypt.hash(password, saltRounds);
     }
 
-    console.log("userid = ", userId);
-
-    let user = await userInfo.findById(userId);
+    let user = await userInfo.findById(req.user._id);
     if (!user) {
       return response(res, 401, {
         status: false, 
@@ -232,11 +230,11 @@ exports.updateUser = async (req, res) => {
       user.address.push(address);
     }
 
-    user.phone = phone || user.phone;
-    user.city = city || user.city;
-    user.state = state || user.state;
-    user.pinCode = pinCode || user.pinCode;
-    user.country = country || user.country;
+    user.phone = phone || user.phone
+    user.city = city || user.city
+    user.state = state || user.state
+    user.pinCode = pinCode || user.pinCode
+    user.country = country || user.country
     user.image = req?.file?.path || user.image
     user.gender = gender || user.gender
     user.uniqueId = user.uniqueId
