@@ -6,6 +6,7 @@ const { response } = require("../utils/response");
 const transporter = require("../utils/emailConfig.js");
 const { deleteFile } = require("../utils/deleteFile.js");
 const {uniqueId} = require('../utils/generateCode.js')
+const fs = require("fs");
 
 // --------------------- start user login & registration --------------------------
 
@@ -185,7 +186,6 @@ exports.getUser = async (req, res) => {
 };
 
 exports.updateUser = async (req, res) => {
-  console.log("req.file = ",req.file);
   console.log(req.user);
   try {
     const {
@@ -216,15 +216,10 @@ exports.updateUser = async (req, res) => {
       });
     }
 
-    if (req.file) {
-      deleteFile(user.image)
-      user.image = req.file.path
-  }
-
     user.firstName = firstName || user.firstName;
     user.lastName = lastName || user.lastName;
     user.email = email || user.email;
-    user.password = hashedPassword;
+    user.password = hashedPassword || user.password;
 
     if (address) {
       user.address.push(address);
@@ -245,6 +240,7 @@ exports.updateUser = async (req, res) => {
         _id: userUpdateData._id,
         firstName: userUpdateData.firstName,
         lastName: userUpdateData.lastName,
+        password: userUpdateData.password,
         email: userUpdateData.email,
         address: userUpdateData.address,
         image: userUpdateData.image,
@@ -277,6 +273,54 @@ exports.deleteUser = async (req, res) => {
   } catch (error) {
     console.error("Error deleting user:", error);
     return response(res, 500, error.message || "Internal Server Error");
+  }
+};
+
+exports.updateImage = async (req, res) => {
+  try {
+
+    console.log("req.file", req.file);
+
+    const user = await userInfo.findById(req.user._id);
+
+    if (!user) {
+      deleteFile(req.file);
+      return response( res, 200, { status: false, message: "Admin does not Exist!" });
+    }
+
+    if (req.file) {
+      if (fs.existsSync(user.image)) {
+        fs.unlinkSync(user.image);
+      }
+
+      user.image = req.file.path;
+    }
+
+    await user.save();
+
+    const payload = {
+      _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        password: user.password,
+        email: user.email,
+        address: user.address,
+        image: user.image,
+        phone: user.phone,
+        gender: user.gender, 
+        uniqueId: user.uniqueId
+    };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET);
+
+    return response(res, 200, {
+      message: "User Image Update Successfully !!",
+      token,
+    })
+  } catch (error) {
+    console.log(error);
+    deleteFile(req.file);
+    return response(res, 500, { status: false, message: "Internal Server Error" })
   }
 };
 
