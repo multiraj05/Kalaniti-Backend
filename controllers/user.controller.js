@@ -37,7 +37,7 @@ exports.userRegistration = async (req, res) => {
       user.phone = phone
       user.address = []
       user.gender = gender
-      user.customerId = uniqueId(8)
+      user.customerId = uniqueId(10)
 
       if (req.file) {
         user.image = req.file.path;
@@ -180,7 +180,7 @@ exports.getUser = async (req, res) => {
       userTotal: totalCount,
     });
   } catch (error) {
-    console.error("Error in addBooking:", error);
+    console.error("Error in getUser:", error);
     return response(res, 500, error.message || "Internal Server Error");
   }
 };
@@ -658,7 +658,7 @@ exports.addUser = async (req, res) => {
   console.log(req.file);
 
   try {
-    const { firstName, lastName, email, password, phone ,gender } = req.body;
+    const { firstName, lastName, email, password, phone ,gender ,customerId} = req.body;
 
     if (!password || !firstName || !lastName || !email || !phone || !gender) {
       return response(res, 201, { status: false, message: "oops...! || some fields are required"});
@@ -681,7 +681,7 @@ exports.addUser = async (req, res) => {
       user.phone = phone
       user.address = []
       user.gender = gender
-      user.customerId = uniqueId(10)
+      user.customerId = uniqueId(10) || customerId
 
       if (req.file) {
         user.image = req.file.path;

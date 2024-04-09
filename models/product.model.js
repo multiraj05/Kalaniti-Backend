@@ -5,6 +5,10 @@ const productSchema = new mongoose.Schema({
     productCode: {
         type: String,
     },
+    isTrend:{
+        type:Boolean,
+        default:false
+    },
     productName: {
         type: String,
         trim: true
