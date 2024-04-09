@@ -176,3 +176,84 @@ exports.deleteProduct = async (req, res) => {
       return response( res , 500, { status: "error", message: "Could not delete product data!" });
   }
 };
+
+
+// ============= find by category product ================
+
+exports.getProductsById = async (req, res) => {
+  try {
+      const { categoryId} = req.query;
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 10;
+      console.log(req.query);
+      const skip = page * limit;
+      const search = req.query.search;
+      const fieldsToSearch = ["name"];
+
+      let matchQuery = {};
+
+      if (categoryId) {
+          matchQuery = {
+              categoryId: new mongoose.Types.ObjectId(categoryId)
+          };
+      }
+
+      // if (productId) {
+      //     matchQuery = {
+      //         _id: new mongoose.Types.ObjectId(productId)
+      //     };
+      // }
+
+      if (search) {
+          matchQuery = {
+              $or: [
+                  ...fieldsToSearch.map(field => ({
+                      [field]: { $regex: search, $options: "i" }
+                  })),
+                  ...fieldsToSearch.map(field => ({
+                      $expr: {
+                          $regexMatch: {
+                              input: { $toString: `$${field}` },
+                              regex: search,
+                              options: "i"
+                          }
+                      }
+                  }))
+              ]
+          };
+      }
+
+      const commonPipeline = [
+          {
+              $match: matchQuery,
+          },
+      ];
+
+      const countPipeline = [...commonPipeline, { $count: "totalCount" }];
+      const aggregationPipeline = [
+          ...commonPipeline,
+          { $skip: skip },
+          { $limit: limit },
+          { $sort: { createdAt: -1 } },
+      ];
+
+      const countResult = await productInfo.aggregate(countPipeline);
+      const totalCount = countResult[0]?.totalCount || 0;
+
+      const Result = await productInfo.aggregate(aggregationPipeline);
+      const paginatedResults = Result || [];
+
+      return response( res, 200, {
+          status: "success",
+          message: "All products retrieved successfully",
+          products: paginatedResults,
+          productsTotal: totalCount,
+      });
+  } catch (error) {
+      console.error("Error in getProducts:", error);
+      return response( res, 500, {
+          status: "error",
+          message: "Internal server error",
+      })
+  }
+};

@@ -103,14 +103,19 @@ exports.updateCategory = async (req, res) => {
     try {
       console.log(req.body);
       console.log(req.query);
+      const {name} = req.body
       const { id } = req.query;
   
       const category = await categoryInfo.findById(id);
+
       if (!category) {
         return response( res, 401, { success: false, message: "Category not found!" });
       }
+
+      category.name = name || category.name;
+      category.image = req?.file?.path || category.image;
   
-      await categoryInfo.updateOne({ _id: id }, req.body);
+      await category.save();
   
       const updatedCategory = await categoryInfo.findById(id);
       return response( res, 200, {
