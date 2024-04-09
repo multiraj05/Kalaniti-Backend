@@ -37,7 +37,7 @@ exports.userRegistration = async (req, res) => {
       user.phone = phone
       user.address = []
       user.gender = gender
-      user.uniqueId = uniqueId(8)
+      user.customerId = uniqueId(8)
 
       if (req.file) {
         user.image = req.file.path;
@@ -649,3 +649,121 @@ exports.userPasswordReset = async (req, res) => {
 };
 
 // --------------------- end user password ----------------------------------
+
+
+// ------------------------- Start New Admin User Controller ----------------------
+
+exports.addUser = async (req, res) => {
+  console.log(req.body);
+  console.log(req.file);
+
+  try {
+    const { firstName, lastName, email, password, phone ,gender } = req.body;
+
+    if (!password || !firstName || !lastName || !email || !phone || !gender) {
+      return response(res, 201, { status: false, message: "oops...! || some fields are required"});
+    }
+
+    const isUser = await userInfo.findOne({ email });
+
+    if (isUser){
+      return response(res, 201, { status: false, message: "User already exist...!"});
+    }
+
+    const hashPassword = await bcrypt.hash(password, 10);
+
+    const user = await userInfo();
+
+      user.firstName = firstName
+      user.lastName = lastName
+      user.email = email
+      user.password = hashPassword
+      user.phone = phone
+      user.address = []
+      user.gender = gender
+      user.customerId = uniqueId(10)
+
+      if (req.file) {
+        user.image = req.file.path;
+      }
+
+    await user.save();
+
+    return response(res, 200, {
+      status: true, 
+      message: "User registered successfully", 
+      user
+    });
+  } catch (ex) {
+    console.log(ex);
+    return response(res, 500,{
+      status: false, 
+      message: "Internal server error", 
+      error: ex
+    });
+  };
+}
+
+exports.userUpdate = async (req, res) => {
+  try {
+    const {userId} = req.query;
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      pinCode,
+      city,
+      address,
+      phone,
+      country,
+      state,
+      gender
+    } = req.body;
+
+    // let hashedPassword;
+    
+    if (password) {
+      const saltRounds = 10;
+      hashedPassword = await bcrypt.hash(password, saltRounds);
+    }
+
+    const user = await userInfo.findById(userId);
+
+    console.log("User = ",user);
+
+    if (!user) {
+      return response(res, 401, {
+        status: false, 
+        message: "User not found"
+      });
+    }
+
+    user.firstName = firstName || user.firstName;
+    user.lastName = lastName || user.lastName;
+    user.email = email || user.email;
+    user.password = hashedPassword || user.password;
+
+    if (address) {
+      user.address.push(address);
+    }
+
+    user.phone = phone || user.phone
+    user.city = city || user.city
+    user.state = state || user.state
+    user.pinCode = pinCode || user.pinCode
+    user.country = country || user.country
+    user.image = req?.file?.path || user.image
+    user.gender = gender || user.gender
+    user.uniqueId = user.uniqueId
+
+    const userUpdateData = await user.save();
+
+    return response(res, 200, { status: true, message: "User updated successfully", user: userUpdateData });
+  } catch (error) {
+    console.error("Error updating user:", error);
+    return response(res, 500, error.message || "Internal Server Error");
+  }
+};
+
+// ------------------------- End New Admin User Controller ----------------------
