@@ -1,18 +1,27 @@
 const { categoryInfo } = require("../models/index.model");
 const{response}=require("../utils/response");
 const mongoose=require("mongoose")
+const {uniqueId} = require('../utils/generateCode.js');
 
 exports.createCategory = async (req, res) => {
     console.log("Category Image = ", req.file);
     try {
         const { name} = req.body;
+        let categoryId;
         if (!name) {
             return response( res, 201, { status: false, message: 'Category name is required' });
+        }
+
+        if (req.body.categoryId) {
+            categoryId = req.body.categoryId;
+        }else{
+            category.categoryId = uniqueId(10);
         }
 
         const category = new categoryInfo();
 
         category.name = name;
+        category.categoryId = categoryId;
 
         if (req.file) {
             category.image = req.file.path;
