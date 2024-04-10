@@ -3,6 +3,7 @@ const{response}=require("../utils/response");
 const mongoose=require("mongoose")
 
 exports.createCategory = async (req, res) => {
+    console.log("Category Image = ", req.file);
     try {
         const { name} = req.body;
         if (!name) {

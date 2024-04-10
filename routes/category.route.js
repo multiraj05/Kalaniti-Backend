@@ -6,7 +6,7 @@ const storage = require("../utils/multer");
 const upload = multer({storage});
 
 
-route.post("/add",upload.any("image"),categoryController.createCategory);
+route.post("/add",upload.single("image"),categoryController.createCategory);
 route.get("/show",categoryController.getCategories);
 route.patch("/update",upload.any("image"),categoryController.updateCategory);
 route.delete("/delete",categoryController.deleteCategory);
