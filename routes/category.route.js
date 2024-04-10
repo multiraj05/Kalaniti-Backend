@@ -8,7 +8,7 @@ const upload = multer({storage});
 
 route.post("/add",upload.single("image"),categoryController.createCategory);
 route.get("/show",categoryController.getCategories);
-route.patch("/update",upload.any("image"),categoryController.updateCategory);
+route.patch("/update",upload.single("image"),categoryController.updateCategory);
 route.delete("/delete",categoryController.deleteCategory);
 
 module.exports = route;

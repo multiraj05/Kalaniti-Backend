@@ -103,6 +103,7 @@ exports.getCategories = async (req, res) => {
 exports.updateCategory = async (req, res) => {
     console.log("update data = ",req.body);
     console.log("categoryId = ",req.query);
+    console.log("categoryImage = ",req.file);
     try {
       const {name} = req.body
       const { id } = req.query;
