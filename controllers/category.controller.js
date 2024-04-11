@@ -114,8 +114,8 @@ exports.updateCategory = async (req, res) => {
     console.log("categoryId = ",req.query);
     console.log("categoryImage = ",req.file);
     try {
-      const {name} = req.body
-      const { id } = req.query;
+        const {name} = req.body
+        const { id } = req.query;
   
       const category = await categoryInfo.findById(id);
 

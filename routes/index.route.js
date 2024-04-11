@@ -1,6 +1,8 @@
 const express = require('express');
 const route = express.Router();
 
+// ------------------ start users route ---------------
+
 const cartRoute = require("./cart.route");
 route.use("/cart", cartRoute);
 
@@ -13,8 +15,6 @@ route.use("/product", productRoute);
 const categoryRoute = require("./category.route");
 route.use("/category", categoryRoute);
 
-const adminRoute = require("./admin.route");
-route.use("/admin", adminRoute);
 
 const orderRoute = require("./order.route");
 route.use("/order", orderRoute);
@@ -22,5 +22,16 @@ route.use("/order", orderRoute);
 const paymentRoute = require("./payment.route");
 route.use("/payment", paymentRoute);
 
+const Banner = require("./banner.route");
+route.use("/banner", Banner);
+
+// ------------------ end users route ---------------
+
+// ------------------ start admin route ---------------
+
+const adminRoute = require("./admin.route");
+route.use("/admin", adminRoute);
+
+// ------------------ end admin route ---------------
 
 module.exports = route;
