@@ -4,6 +4,7 @@ const fs = require("fs");
 const { response } = require("../utils/response");
 const { ObjectId } = mongoose.Types;
 const {uniqueId} = require('../utils/generateCode');
+const {deleteFilesPath}=require('../utils/deleteFile.js')
 
 exports.addProduct = async (req, res) => {
   try {
@@ -15,7 +16,7 @@ exports.addProduct = async (req, res) => {
       "description",
       "categoryId",
     ];
-    
+    console.log(req.body);
     const missingFields = requiredFields.filter((field) => !req.body[field]);
 
     if (missingFields.length > 0) {
@@ -49,7 +50,7 @@ exports.addProduct = async (req, res) => {
 
     await productData.save();
 
-    return response(res, 200, { message: "Product added successfully", data: productData });
+    return response(res, 200, { message: "Product added successfully", products: productData });
   } catch (error) {
     console.error(error);
     return response(res, 500, { message: "Internal server error" });
@@ -128,6 +129,7 @@ exports.getProducts = async (req, res) => {
                   images: 1,
                   category: "$category.name",
                   productCode: 1,
+                  createdAt: 1,
               },
           }
       ];
@@ -162,27 +164,48 @@ exports.getProducts = async (req, res) => {
 };
 
 exports.updateProduct = async (req, res) => {
+
+  console.log("product id = ",req.query);
+  console.log("product data = ",req.body);
+
   try {
-    const productId = req.query.productId;
-    const updates = req.body;
+    const {id} = req.query;
+    const { productName, price1, price2 , title, description} = req.body;
 
-    if (!productId) {
-      return response( res, 201, { status: 'error', message: 'Product ID is required' });
-    }
+    const product = await productInfo.findById(id);
 
-    const product = await productInfo.findById(productId);
+    console.log("product = ",product);
 
     if (!product) {
       return response( res, 401, { status: 'error', message: 'Product not found' });
     }
+    if (req.files && req.files.length > 0) {
+      const oldImages = product.images;
+    
+      product.images = [];
 
-    Object.keys(updates).forEach(key => {
-      product[key] = updates[key];
-    });
+      
+      req.files.forEach(file => {
+        product.images.push(file.path);
+          console.log('file.path', file.path)
+      });
+      
+      deleteFilesPath(oldImages);
+  }
+  
+
+    product.title = title || product.title;
+    product.productName = productName || product.productName;
+    product.price1 = price1 || product.price1;
+    product.price2 = price2 || product.price2;
+    product.description = description || product.description;
+    // product.images = req.files.map((file) => file.path) || product.images;
 
     await product.save();
 
-    return response( res , 200, { status: 'success', message: 'Product updated successfully', product });
+    const updateProduct = await productInfo.findById(id);
+
+    return response( res , 200, { status: 'success', message: 'Product updated successfully', updateProduct });
   } catch (error) {
     console.error('Error updating product:', error);
     return response( res, 500, { status: 'error', message: 'Internal Server Error' });
@@ -191,9 +214,9 @@ exports.updateProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
   try {
-      const { productId } = req.query;
+      const { id } = req.query;
 
-      const deletedProduct = await productInfo.findByIdAndDelete(productId);
+      const deletedProduct = await productInfo.findByIdAndDelete(id);
 
       if (!deletedProduct) {
           return response( res, 401, { status: "error", message: "Product not found!" });

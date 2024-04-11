@@ -6,7 +6,7 @@ const storage = require("../utils/multer");
 const upload = multer({storage});
 
 
-route.post("/add",upload.any("images"),productController.addProduct);
+route.post("/create",upload.any("images"),productController.addProduct);
 route.get("/show",upload.any("images"),productController.getProducts);
 route.patch("/update",upload.any("images"),productController.updateProduct);
 route.delete("/delete",productController.deleteProduct);
