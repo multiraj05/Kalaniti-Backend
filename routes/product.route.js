@@ -13,5 +13,6 @@ route.delete("/delete",productController.deleteProduct);
 
 route.get("/showProduct",productController.getProductsById);
 
+route.put('/status',productController.enableDisableTrend);
 
 module.exports = route;

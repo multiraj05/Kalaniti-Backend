@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const fs = require("fs");
 const { response } = require("../utils/response");
 const { ObjectId } = mongoose.Types;
+const {uniqueId} = require('../utils/generateCode');
 
 exports.addProduct = async (req, res) => {
   try {
@@ -43,6 +44,7 @@ exports.addProduct = async (req, res) => {
       description: req.body.description,
       images: imagePaths,
       categoryId: categoryIdObj,
+      productCode: uniqueId(10),
     });
 
     await productData.save();
@@ -101,6 +103,33 @@ exports.getProducts = async (req, res) => {
           {
               $match: matchQuery,
           },
+          {
+            $lookup: {
+              from: "categories",
+              localField: "categoryId",
+              foreignField: "_id",
+              as: "category",
+            }
+          },
+          {
+              $unwind: {
+                  path: "$category",
+                  preserveNullAndEmptyArrays: true,
+              },
+          },
+          {
+              $project: {
+                  _id: 1,
+                  title: 1,
+                  productName: 1,
+                  price1: 1,
+                  price2: 1,
+                  description: 1,
+                  images: 1,
+                  category: "$category.name",
+                  productCode: 1,
+              },
+          }
       ];
 
       const countPipeline = [...commonPipeline, { $count: "totalCount" }];
@@ -256,4 +285,40 @@ exports.getProductsById = async (req, res) => {
           message: "Internal server error",
       })
   }
+};
+
+// ================= update isTrend status ================
+
+exports.enableDisableTrend = async (req, res) => {
+    const { id } = req.query;
+    try {
+      if (!id) {
+        return response(res, 201, {
+          status: false,
+          message: "Oops! Invalid Details!",
+        });
+      }
+      const product = await productInfo.findById(id);
+  
+      if (!product) {
+        return response(res, 201, {
+          status: false,
+          message: "Oops! Invalid Product ID!",
+        });
+      }
+
+      product.isTrend = !product.isTrend;
+      await product.save();
+  
+      return response(res, 200, {
+        message: "Product isTrend Status Updated Successfully !!",
+        product,
+      });
+    } catch (error) {
+      console.error("Error updating banner status = ", error);
+      return response(res, 500, {
+        status: false,
+        message: "Internal Server Error",
+      });
+    }
 };
