@@ -9,7 +9,7 @@ const bannerSchema = new mongoose.Schema({
     },
     isActive:{
         type:Boolean,
-        default:false
+        default:true
     },
     title:{
         type:String

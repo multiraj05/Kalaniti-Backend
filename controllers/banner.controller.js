@@ -225,4 +225,4 @@ exports.enableDesableBanner = async (req, res) => {
         message: "Internal Server Error",
       });
     }
-};  
+};
