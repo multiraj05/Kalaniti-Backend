@@ -205,7 +205,7 @@ exports.updateProduct = async (req, res) => {
 
     const updateProduct = await productInfo.findById(id);
 
-    return response( res , 200, { status: 'success', message: 'Product updated successfully', updateProduct });
+    return response( res , 200, { status: 'success', message: 'Product updated successfully', products:updateProduct });
   } catch (error) {
     console.error('Error updating product:', error);
     return response( res, 500, { status: 'error', message: 'Internal Server Error' });
@@ -222,7 +222,7 @@ exports.deleteProduct = async (req, res) => {
           return response( res, 401, { status: "error", message: "Product not found!" });
       }
 
-     return response( res, 200,{ status: "success", message: "Product deleted successfully!", deletedProduct });
+     return response( res, 200,{ status: "success", message: "Product deleted successfully!", products:deletedProduct });
   } catch (error) {
       console.error(error);
       return response( res , 500, { status: "error", message: "Could not delete product data!" });
@@ -335,7 +335,7 @@ exports.enableDisableTrend = async (req, res) => {
   
       return response(res, 200, {
         message: "Product isTrend Status Updated Successfully !!",
-        product,
+        products:product,
       });
     } catch (error) {
       console.error("Error updating banner status = ", error);

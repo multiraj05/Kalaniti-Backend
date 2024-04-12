@@ -149,7 +149,7 @@ exports.update = async (req, res) => {
         return response( res, 200, {
           status: true,
           message: "Banner updated successfully!",
-          Banner: updateBanner,
+          banner: updateBanner,
         });
         
     } catch (error) {
@@ -180,7 +180,7 @@ exports.delete = async (req, res) => {
         { 
             success: true, 
             message: "Banner deleted successfully!", 
-            Banner: banner 
+            banner: banner 
         });
 
     } catch (error) {
