@@ -8,6 +8,11 @@ const { deleteFile } = require("../utils/deleteFile.js");
 const {uniqueId} = require('../utils/generateCode.js')
 const fs = require("fs");
 
+const Cryptr = require("cryptr");
+require('dotenv').config();
+const cryptrKey = process.env.CRYPTR_KEY;
+const cryptr = new Cryptr(cryptrKey);
+
 // --------------------- start user login & registration --------------------------
 
 exports.userRegistration = async (req, res) => {
@@ -26,7 +31,7 @@ exports.userRegistration = async (req, res) => {
       return response(res, 201, { status: false, message: "Email already exist"});
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await cryptr.encrypt(password, 10);
 
     const user = await userInfo();
 
@@ -76,11 +81,9 @@ exports.userLogin = async (req, res) => {
       console.log("user login password", password);
       console.log("user password", user.password);
 
-      const isPasswordValid = await bcrypt.compareSync(password, user.password);
-
-      if (!isPasswordValid) {
-        return response(res, 201, { status: false, message: "Invalid password" });
-      }
+      if (req.body.password != cryptr.decrypt(user.password)) {
+        return response(res, 201, { message: "Oops ! Password doesn't exist" });
+    }
 
       const userData = {
         _id: user._id,
@@ -201,12 +204,7 @@ exports.updateUser = async (req, res) => {
       state,
       gender
     } = req.body;
-
-    let hashedPassword;
-    if (password) {
-      const saltRounds = 10;
-      hashedPassword = await bcrypt.hash(password, saltRounds);
-    }
+    console.log("body=====",req.body);
 
     let user = await userInfo.findById(req.user._id);
     if (!user) {
@@ -219,7 +217,7 @@ exports.updateUser = async (req, res) => {
     user.firstName = firstName || user.firstName;
     user.lastName = lastName || user.lastName;
     user.email = email || user.email;
-    user.password = hashedPassword || user.password;
+    user.password = password ? cryptr.encrypt(password) : user.password;
 
     if (address) {
       user.address.push(address);
@@ -321,6 +319,28 @@ exports.updateImage = async (req, res) => {
     console.log(error);
     deleteFile(req.file);
     return response(res, 500, { status: false, message: "Internal Server Error" })
+  }
+};
+
+exports.showPassword = async (req, res) => {
+  try {
+      const { userId } = req.query;
+
+      const user = await userInfo.findById(userId);
+      if (!user) {
+          return response(res, 404, { message: "User not found" });
+      }
+
+      const decryptedPassword = cryptr.decrypt(user.password);
+      console.log('decryptedPassword', decryptedPassword);
+      return response(res, 200, {
+          message: "User password retrieved successfully",
+          password: decryptedPassword
+      });
+
+  } catch (error) {
+      console.error(error);
+      return response(res, 500, { message: "Internal server error" });
   }
 };
 
@@ -670,7 +690,7 @@ exports.addUser = async (req, res) => {
       return response(res, 201, { status: false, message: "User already exist...!"});
     }
 
-    const hashPassword = await bcrypt.hash(password, 10);
+    const hashPassword = await crypt.encrypt(password, 10);
 
     const user = await userInfo();
 
@@ -721,12 +741,6 @@ exports.userUpdate = async (req, res) => {
       gender
     } = req.body;
 
-    // let hashedPassword;
-    
-    if (password) {
-      const saltRounds = 10;
-      hashedPassword = await bcrypt.hash(password, saltRounds);
-    }
 
     const user = await userInfo.findById(userId);
 
@@ -742,7 +756,7 @@ exports.userUpdate = async (req, res) => {
     user.firstName = firstName || user.firstName;
     user.lastName = lastName || user.lastName;
     user.email = email || user.email;
-    user.password = hashedPassword || user.password;
+    user.password = password ? cryptr.encrypt(password) : user.password;
 
     if (address) {
       user.address.push(address);

@@ -38,7 +38,7 @@ exports.getOrders = async (req, res) => {
         const page = parseInt(req.query.page) || 0;
         const limit = parseInt(req.query.limit) || 10;
         const skip = page * limit;
-        const {orderId, search,cardId } = req.query;
+        const {orderId, search} = req.query;
 
         if (orderId) {
             const order = await Order.findById(orderId);
@@ -68,6 +68,14 @@ exports.getOrders = async (req, res) => {
 
             const commonPipeline = [
                 { $match: matchQuery },
+                {
+                    $lookup: {
+                        from: "carts",
+                        localField: "cartId",
+                        foreignField: "_id",
+                        as: "cart",
+                    },
+                },
             ];
 
             const countPipeline = [...commonPipeline, { $count: "totalCount" }];
@@ -99,31 +107,31 @@ exports.getOrders = async (req, res) => {
 
 exports.updateOrderStatus = async (req, res) => {
   try {
-    const { orderId } = req.query;
-    const { status } = req.body;
+    const { id } = req.query
+    const { status } = req.query
 
-    if (!orderId || !status) {
-      return response( res, 201, { status: 'error', message: 'Order ID and status are required' });
+        if (!id) {
+            return response(res, 201, { message: "Oops ! Invalid details !" });
+        }
+        const order = await Order.findById(id)
+
+        if (!order) {
+            return response(res, 201, { message: "Oops ! order not  found !" })
+        }
+        if (!status) {
+            return response(res, 400, { message: "Missing required fields in the request body." });
+        }
+
+        order.status = status || order.status;
+
+        await order.save()
+
+        return response(res, 200, {
+            message: "order status updated successfully!!",
+            order:order,
+        });
+    } catch (error) {
+        console.log(error);
+        return response(res, 500, error);
     }
-
-    const validStatus = ['pending', 'processing', 'shipped', 'delivered'];
-    if (!validStatus.includes(status)) {
-      return response( res, 201, { status: 'error', message: 'Invalid status' });
-    }
-
-    const updatedOrder = await Order.findByIdAndUpdate(
-      orderId,
-      { status },
-      { new: true }
-    );
-
-    if (!updatedOrder) {
-      return response( res, 401, { status: 'error', message: 'Order not found' });
-    }
-
-    return response( res, 200, { status: 'success', message: 'Order status updated successfully', order: updatedOrder });
-  } catch (error) {
-    console.error('Error updating order status:', error);
-    return response( res, 500, { status: 'error', message: 'Internal Server Error' });
-  }
-};
+}

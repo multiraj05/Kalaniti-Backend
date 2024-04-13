@@ -12,9 +12,14 @@ const orderSchema = new mongoose.Schema(
           },
         status: {
             type: String,
-            enum: ['pending', 'processing', 'shipped', 'delivered'],
-            default: 'pending'
+            enum: [1,2,3,4,5], // 1=pending, 2=confirm, 3=delivered, 4=canceled, 5=return
+            default: '1'
         },
+        // status: {
+        //     type: String,
+        //     enum: ['pending','confirmed','delivered','undo','cancel'],
+        //     default: 'pending'
+        // },
         totalPrice: {
             type: Number,
             required: true
