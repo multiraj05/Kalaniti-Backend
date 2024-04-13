@@ -2,6 +2,7 @@ const { categoryInfo } = require("../models/index.model");
 const{response}=require("../utils/response");
 const mongoose=require("mongoose")
 const {uniqueId} = require('../utils/generateCode.js');
+const { $where } = require("../models/cart.model.js");
 
 exports.createCategory = async (req, res) => {
     console.log("Category Image = ", req.file);
@@ -81,6 +82,21 @@ exports.getCategories = async (req, res) => {
             {
                 $match: matchQuery,
             },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "_id",
+                    foreignField: "categoryId",
+                    as: "products",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$products",
+                    preserveNullAndEmptyArrays: true,
+                }
+            },
+            
         ];
 
         const countPipeline = [...commonPipeline, { $count: "totalCount" }];

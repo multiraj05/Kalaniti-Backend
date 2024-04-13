@@ -117,6 +117,7 @@ exports.userLogin = async (req, res) => {
 
 // --------------------- start user update,delete,show ----------------------------
 
+
 exports.getUser = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 0;
@@ -690,7 +691,7 @@ exports.addUser = async (req, res) => {
       return response(res, 201, { status: false, message: "User already exist...!"});
     }
 
-    const hashPassword = await crypt.encrypt(password, 10);
+    const hashPassword = await cryptr.encrypt(password, 10);
 
     const user = await userInfo();
 
