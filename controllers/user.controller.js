@@ -671,7 +671,6 @@ exports.userPasswordReset = async (req, res) => {
 
 // --------------------- end user password ----------------------------------
 
-
 // ------------------------- Start New Admin User Controller ----------------------
 
 exports.addUser = async (req, res) => {
