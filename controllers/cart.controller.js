@@ -23,7 +23,7 @@ exports.addToCart = async (req, res) => {
 
       oldProduct.size = size;
       oldProduct.quantity = oldProduct.quantity + parseInt(quantity);
-      oldProduct.totalCount = calculateTotalCount(oldProduct); 
+      // oldProduct.totalCount = calculateTotalCount(oldProduct); 
       await oldProduct.save();
       return response( res, 200,{status: true , message: "Product added to cart", cart: oldProduct });
     }

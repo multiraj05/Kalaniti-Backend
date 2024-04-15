@@ -9,4 +9,6 @@ route.post("/create",orderController.createOrder);
 route.get("/show",orderController.getOrders);
 route.put("/updateStatus",orderController.updateOrderStatus);
 
+route.get("/showOrder",orderController.allOrder);
+
 module.exports = route;

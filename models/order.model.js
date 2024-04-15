@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema(
     {
+        orderCode:{
+            type: String
+        },
         cartId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "cart",

@@ -1,6 +1,7 @@
 const { Order,cartDetails,userInfo,productInfo} = require("../models/index.model");
 const{ response }=require("../utils/response");
 const mongoose =require("mongoose")
+const {uniqueId} = require('../utils/generateCode')
 
 exports.createOrder = async (req, res) => {
     try {
@@ -21,7 +22,8 @@ exports.createOrder = async (req, res) => {
         const order = new Order({
             cartId,
             userId,
-            totalPrice
+            totalPrice,
+            orderCode: uniqueId(10),
         });
 
         await order.save();
@@ -32,171 +34,6 @@ exports.createOrder = async (req, res) => {
         return response( res, 500, { status: false, message: 'Internal Server Error' });
     }
 };
-
-// exports.getOrders = async (req, res) => {
-//     try {
-//         const page = parseInt(req.query.page) || 0;
-//         const limit = parseInt(req.query.limit) || 10;
-//         const skip = page * limit;
-//         const {orderId, search} = req.query;
-
-//         if (orderId) {
-//             const order = await Order.findById(orderId);
-//             if (!order) {
-//                 return response( res, 401, { status: false, message: 'Order not found' });
-//             }
-//             return response( res, 200, { status: true, message: 'Order retrieved successfully', order });
-//         } else {
-//             const fieldsToSearch = ["status"];
-//             let matchQuery = {};
-//             if (search) {
-//                 matchQuery = {
-//                     $or: [
-//                         ...fieldsToSearch.map(field => ({ [field]: { $regex: search, $options: "i" } })),
-//                         ...fieldsToSearch.map(field => ({
-//                             $expr: {
-//                                 $regexMatch: {
-//                                     input: { $toString: `$${field}` },
-//                                     regex: search,
-//                                     options: "i",
-//                                 },
-//                             },
-//                         }))
-//                     ],
-//                 };
-//             }
-
-//             const commonPipeline = [
-//                 { $match: matchQuery },
-//                 {
-//                     $lookup: {
-//                         from: "carts",
-//                         localField: "cartId",
-//                         foreignField: "_id",
-//                         as: "cart",
-//                     },
-//                 },
-//             ];
-
-//             const countPipeline = [...commonPipeline, { $count: "totalCount" }];
-//             const aggregationPipeline = [
-//                 ...commonPipeline,
-//                 { $skip: skip },
-//                 { $limit: limit },
-//                 { $sort: { createdAt: -1 } },
-//             ];
-
-//             const countResult = await Order.aggregate(countPipeline);
-//             const totalCount = countResult[0]?.totalCount || 0;
-
-//             const result = await Order.aggregate(aggregationPipeline);
-//             const paginatedResults = result || [];
-
-//             return response( res, 200, {
-//                 status: true,
-//                 message: "Orders retrieved successfully",
-//                 orders: paginatedResults,
-//                 totalOrders: totalCount
-//             });
-//         }
-//     } catch (error) {
-//         console.error("Error fetching orders:", error);
-//         return response( res, 500, { status: false, message: "Internal Server Error" });
-//     }
-// };
-
-
-// exports.getOrders = async (req, res) => {
-//     try {
-//         const page = parseInt(req.query.page) || 0;
-//         const limit = parseInt(req.query.limit) || 10;
-//         const skip = page * limit;
-//         const { userId, orderId, search } = req.query;
-
-//         if (orderId) {
-//             const order = await Order.findById(orderId);
-//             if (!order) {
-//                 return response(res, 401, { status: false, message: 'Order not found' });
-//             }
-//             return response(res, 200, { status: true, message: 'Order retrieved successfully', order });
-//         } else {
-//             const fieldsToSearch = ["status"];
-//             let matchQuery = { userId: userId };
-//             if (search) {
-//                 matchQuery.$or = [
-//                     ...fieldsToSearch.map(field => ({ [field]: { $regex: search, $options: "i" } })),
-//                     ...fieldsToSearch.map(field => ({
-//                         $expr: {
-//                             $regexMatch: {
-//                                 input: { $toString: `$${field}` },
-//                                 regex: search,
-//                                 options: "i",
-//                             },
-//                         },
-//                     }))
-//                 ];
-//             }
-
-//             const commonPipeline = [
-//                 { $match: matchQuery },
-//                 {
-//                     $lookup: {
-//                         from: "cartdetails",
-//                         localField: "cartId",
-//                         foreignField: "_id",
-//                         as: "cart",
-//                     },
-//                 },
-//             ];
-
-//             const countPipeline = [...commonPipeline, { $count: "totalCount" }];
-//             const aggregationPipeline = [
-//                 ...commonPipeline,
-//                 { $skip: skip },
-//                 { $limit: limit },
-//                 { $sort: { createdAt: -1 } },
-//             ];
-
-//             const countResult = await Order.aggregate(countPipeline);
-//             const totalCount = countResult[0]?.totalCount || 0;
-
-//             const result = await Order.aggregate(aggregationPipeline);
-//             const paginatedResults = result || [];
-
-//             // New logic for retrieving cart information
-//             const ordersWithCartInfo = await Promise.all(paginatedResults.map(async (order) => {
-//                 const cart = await cartDetails.findById(order.cartId);
-//                 const productCounts = cart.productInfo.reduce((acc, product) => {
-//                     acc[product.productId] = acc[product.productId] ? acc[product.productId] + product.quantity : product.quantity;
-//                     return acc;
-//                 }, {});
-//                 const products = await Promise.all(Object.keys(productCounts).map(productId => {
-//                     return productInfo.findOne({ productId: productId });
-//                 }));
-//                 const orderDetails = products.map((product) => {
-//                     return {
-//                         productId: product.productId,
-//                         name: product.name,
-//                         price: product.price2,
-//                         quantity: productCounts[product.productId]
-//                     };
-//                 });
-//                 order.products = orderDetails;
-//                 return order;
-//             }));
-
-//             return response(res, 200, {
-//                 status: true,
-//                 message: "Orders retrieved successfully",
-//                 orders: ordersWithCartInfo,
-//                 totalOrders: totalCount
-//             });
-//         }
-//     } catch (error) {
-//         console.error("Error fetching orders:", error);
-//         return response(res, 500, { status: false, message: "Internal Server Error" });
-//     }
-// };
 
 exports.updateOrderStatus = async (req, res) => {
   try {
@@ -236,18 +73,16 @@ exports.getOrders = async (req, res) => {
         const page = parseInt(req.query.page) || 0;
         const limit = parseInt(req.query.limit) || 10;
         const skip = page * limit;
-        const { userId, orderId, search } = req.query;
+        const { userId, search } = req.query;
+
+        if (!userId) {
+            return response(res, 400, { status: false, message: "Please provide userId" });
+        }
 
         let matchQuery = {};
 
         if (userId) {
-            matchQuery = {
-                userId: new mongoose.Types.ObjectId(userId)
-            };
-        }
-
-        if (!orderId && !userId) {
-            return response(res, 400, { status: false, message: "Please provide orderId or userId" });
+            matchQuery.userId = new mongoose.Types.ObjectId(userId);
         }
 
         const commonPipeline = [
@@ -289,21 +124,22 @@ exports.getOrders = async (req, res) => {
             },
             {
                 $project: {
-                    "_id":1,
-                    "userId":1,
-                    "cartId":1,
-                    "status":1,
-                    "totalPrice":1,
-                    "quantity":"$cartDetails.quantity",
-                    "size":"$cartDetails.size",
+                    "_id": 1,
+                    "userId": 1,
+                    "cartId": 1,
+                    "status": 1,
+                    "orderCode":1,
+                    "totalPrice": 1,
+                    "quantity": "$cartDetails.quantity",
+                    "size": "$cartDetails.size",
                     "productCode": "$productDetails.productCode",
                     "productName": "$productDetails.productName",
-                    "title":"$productDetails.title",
-                    "images":"$productDetails.images",
-                    "price1":"$productDetails.price1",
-                    "price2":"$productDetails.price2",
-                    "category":"$categoryDetails.name",
-                    "createdAt":1,
+                    "title": "$productDetails.title",
+                    "images": "$productDetails.images",
+                    "price1": "$productDetails.price1",
+                    "price2": "$productDetails.price2",
+                    "category": "$categoryDetails.name",
+                    "createdAt": 1,
                 }
             }
         ];
@@ -333,4 +169,91 @@ exports.getOrders = async (req, res) => {
     }
 };
 
+exports.allOrder = async (req, res) => {
+    try {
+        console.log("Fetching orders...");
 
+        const page = parseInt(req.query.page) || 0;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = page * limit;
+
+        const commonPipeline = [
+            {
+                $lookup: {
+                    from: "cartdetails",
+                    localField: "cartId",
+                    foreignField: "_id",
+                    as: "cartDetails",
+                },
+            },
+            {
+                $unwind: "$cartDetails",
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "cartDetails.productId",
+                    foreignField: "_id",
+                    as: "productDetails",
+                },
+            },
+            {
+                $unwind: "$productDetails",
+            },
+            {
+                $lookup: {
+                    from: "categories",
+                    localField: "productDetails.categoryId",
+                    foreignField: "_id",
+                    as: "categoryDetails",
+                },
+            },
+            {
+                $unwind: "$categoryDetails",
+            },
+            {
+                $project: {
+                    "_id": 1,
+                    "userId": 1,
+                    "cartId": 1,
+                    "status": 1,
+                    "orderCode":1,
+                    "totalPrice": 1,
+                    "quantity": "$cartDetails.quantity",
+                    "size": "$cartDetails.size",
+                    "productCode": "$productDetails.productCode",
+                    "productName": "$productDetails.productName",
+                    "title": "$productDetails.title",
+                    "images": "$productDetails.images",
+                    "price1": "$productDetails.price1",
+                    "price2": "$productDetails.price2",
+                    "category": "$categoryDetails.name",
+                    "createdAt": 1,
+                }
+            }
+        ];
+
+        const countPipeline = [...commonPipeline, { $count: "totalCount" }];
+        const aggregationPipeline = [
+            ...commonPipeline,
+            { $skip: skip },
+            { $limit: limit },
+            { $sort: { createdAt: -1 } },
+        ];
+
+        const countResult = await Order.aggregate(countPipeline);
+        const totalCount = countResult[0]?.totalCount || 0;
+
+        const Result = await Order.aggregate(aggregationPipeline);
+        const paginatedResults = Result || [];
+
+        return response(res, 200, {
+            message: "Orders retrieved successfully!",
+            order: paginatedResults,
+            ordersTotal: totalCount,
+        });
+    } catch (error) {
+        console.error("Error fetching orders:", error);
+        return response(res, 500, { status: false, message: "Internal Server Error" });
+    }
+};
