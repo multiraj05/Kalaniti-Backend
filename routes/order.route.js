@@ -11,4 +11,12 @@ route.put("/updateStatus",orderController.updateOrderStatus);
 
 route.get("/showOrder",orderController.allOrder);
 
+// ======= status apis =======
+
+route.get("/pending",orderController.pendingStatus);
+route.get("/confirmed",orderController.confirmedStatus);
+route.get("/delivered",orderController.deliveredStatus);
+route.get("/canceled",orderController.canceledStatus);
+route.get("/return",orderController.returnStatus);
+
 module.exports = route;
