@@ -42,45 +42,21 @@ exports.getCategories = async (req, res) => {
         const page = parseInt(req.query.page) || 0;
         const limit = parseInt(req.query.limit) || 10;
         const skip = page * limit;
-        const { id } = req.query
+        const { id } = req.query;
         const search = req.query.search;
-        const fieldsToSearch = ["name"];
+        const fieldsToSearch = ["name", "image"];
 
-        let matchQuery = {};
+        let matchQuery = {}; 
 
         if (id) {
             matchQuery = {
                 _id: new mongoose.Types.ObjectId(id)
             };
-
-        } else {
-            matchQuery = {
-                $or: [
-                    {
-                        $or: fieldsToSearch.map((field) => ({
-                            [field]: { $regex: String(search), $options: "i" },
-                        })),
-                    },
-                    {
-                        $or: fieldsToSearch.map((field) => ({
-                            $expr: {
-                                $regexMatch: {
-                                    input: { $toString: `$${field}` },
-                                    regex: search,
-                                    options: "i",
-                                },
-                            },
-                        }
-                        )
-                        ),
-                    },
-                ],
-            };
         }
 
         const commonPipeline = [
             {
-                $match: matchQuery,
+                $match: matchQuery, 
             },
             {
                 $lookup: {
@@ -91,39 +67,39 @@ exports.getCategories = async (req, res) => {
                 },
             },
             {
-                $unwind: {
-                    path: "$products",
-                    preserveNullAndEmptyArrays: true,
+                $addFields: {
+                    productsCount: { $size: "$products" }
                 }
             },
-            
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            },
+            {
+                $sort: { createdAt: -1 }
+            }
         ];
 
-        const countPipeline = [...commonPipeline, { $count: "totalCount" }];
         const aggregationPipeline = [
-            ...commonPipeline,
-            { $skip: skip },
-            { $limit: limit },
-            { $sort: { createdAt: -1 } },
+            ...commonPipeline
         ];
 
-
-        const countResult = await categoryInfo.aggregate(countPipeline);
-        const totalCount = countResult[0]?.totalCount || 0;
-
-        const Result = await categoryInfo.aggregate(aggregationPipeline);
-        const paginatedResults = Result || [];
+        const categories = await categoryInfo.aggregate(aggregationPipeline);
+        const totalCount = categories.length; 
 
         return response(res, 200, {
-            message: "categories reterived Successfully !!",
-            categories: paginatedResults,
+            message: "Categories retrieved successfully!",
+            categories: categories,
             categoriesTotal: totalCount,
         });
     } catch (error) {
-        console.error("Error in addBooking:", error);
+        console.error("Error in getCategories:", error);
         return response(res, 500, error.message || "Internal Server Error");
     }
 };
+
 
 exports.updateCategory = async (req, res) => {
     console.log("update data = ",req.body);
