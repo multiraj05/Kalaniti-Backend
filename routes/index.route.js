@@ -30,7 +30,7 @@ route.use("/banner", Banner);
 // ------------------ start admin route ---------------
 
 const dashBoardRoute = require("./dashboard.route");
-route.use("/dashboard", dashBoardRoute);
+route.use("/dashBoard", dashBoardRoute);
 
 const adminRoute = require("./admin.route");
 route.use("/admin", adminRoute);

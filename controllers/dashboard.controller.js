@@ -32,7 +32,7 @@ exports.getDashboard = async (req, res) => {
             userInfo.countDocuments({ gender: 'Female' }),
         ])
 
-        const dashboard = {
+        const dashBoard = {
             totalUser,
             totalProduct,
             totalCategory,
@@ -48,7 +48,7 @@ exports.getDashboard = async (req, res) => {
 
         return response(res, 200, {
             message: "Dashboard Get Successfully !!",
-            dashboard,
+            dashBoard,
           });
     } catch (error) {
         console.log("Error in Dashboard", error);

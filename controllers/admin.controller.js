@@ -1,9 +1,13 @@
 const { Admin } = require("../models/index.model");
-
 const { response } = require("../utils/response")
 const fs = require("fs")
 const jwt = require("jsonwebtoken"); 
-const bcrypt = require("bcryptjs");
+
+
+const Cryptr = require("cryptr");
+require('dotenv').config();
+const cryptrKey = process.env.CRYPTR_KEY;
+const cryptr = new Cryptr(cryptrKey);
 
 exports.addAdmin=async(req,res)=>{
     try {
@@ -14,8 +18,8 @@ exports.addAdmin=async(req,res)=>{
           return response( res, 201, { status: false, message: "Name, email, and password are required" });
         }
 
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(req.body.password, salt);
+        
+        const hashedPassword = await cryptr.encrypt(req.body.password, 10);
 
         const admin = new Admin({
           name: req.body.name,
@@ -47,13 +51,8 @@ exports.adminLogin = async (req, res, next) => {
         return response(res, 401, { message: "Oops ! Email doesn't exist" })
       }
 
-      const isPassword = await bcrypt.compareSync(
-        req.body.password,
-        admin.password
-      );
-
-      if (!isPassword) {
-        return response(res, 401, { message: "Oops ! Password doesn't exist" })
+      if (req.body.password != cryptr.decrypt(admin.password)) {
+        return response(res, 201, { message: "Oops ! Password doesn't exist" });
       }
 
       const payload = {
@@ -151,13 +150,13 @@ exports.update = async (req, res) => {
         }
         console.log("req.body", req.body);
 
-        const validPassword = bcrypt.compareSync(req.body.oldPassword, admin.password);
+        const validPassword = cryptr.decrypt(req.body.oldPassword, admin.password);
 
         if (!validPassword) {
           return response(res, 401, { message: "Oops! Old Password doesn't match" });
         }
 
-        const hash = bcrypt.hashSync(req.body.newPassword, 10);
+        const hash = cryptr.encrypt(req.body.newPassword, 10);
 
         await Admin.updateOne({ _id: req.admin._id }, { $set: { password: hash } }).exec();
         const payload = {
@@ -228,5 +227,28 @@ exports.updateImage = async (req, res) => {
     console.log(error);
     deleteFile(req.file);
     return response(res, 500, { status: false, message: "Internal Server Error" })
+  }
+};
+
+exports.showPassword = async (req, res) => {
+  try {
+      const { id } = req.query;
+
+      const admin = await Admin.findById(id);
+      if (!admin) {
+          return response(res, 404, { message: "User not found" });
+      }
+
+      const decryptedPassword = cryptr.decrypt(admin.password);
+      console.log('decryptedPassword', decryptedPassword);
+
+      return response(res, 200, {
+          message: "Admin password retrieved successfully",
+          password: decryptedPassword
+      });
+
+  } catch (error) {
+      console.error(error);
+      return response(res, 500, { message: "Internal server error" });
   }
 };
