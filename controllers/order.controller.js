@@ -160,8 +160,8 @@ exports.getOrders = async (req, res) => {
 
         return response(res, 200, {
             message: "Orders retrieved successfully!",
-            orders: paginatedResults,
-            ordersTotal: totalCount,
+            order: paginatedResults,
+            orderTotal: totalCount,
         });
     } catch (error) {
         console.error("Error fetching orders:", error);

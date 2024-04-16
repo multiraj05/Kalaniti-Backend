@@ -3,7 +3,6 @@ const { response } = require("../utils/response")
 const fs = require("fs")
 const jwt = require("jsonwebtoken"); 
 
-
 const Cryptr = require("cryptr");
 require('dotenv').config();
 const cryptrKey = process.env.CRYPTR_KEY;
