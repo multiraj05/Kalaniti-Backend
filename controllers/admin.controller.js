@@ -4,6 +4,7 @@ const fs = require("fs")
 const jwt = require("jsonwebtoken"); 
 
 const Cryptr = require("cryptr");
+const { deleteFile } = require("../utils/deleteFile");
 require('dotenv').config();
 const cryptrKey = process.env.CRYPTR_KEY;
 const cryptr = new Cryptr(cryptrKey);
@@ -92,7 +93,6 @@ exports.adminLogin = async (req, res, next) => {
 //           message: "admin get Successfully !!",
 //           admin,
 //       });
-
 //   } catch (error) {
 //       console.log(error);
 //       return response(res, 500, error);
@@ -127,6 +127,7 @@ exports.update = async (req, res) => {
     const token = jwt.sign(payload, process.env.JWT_SECRET);
 
     return response(res, 200, {
+      status: true,
       message: "Admin Updated Successfully!!",
       token,
     })
