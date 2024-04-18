@@ -1,6 +1,6 @@
 const { Admin } = require("../models/index.model");
-const { response } = require("../utils/response")
-const fs = require("fs")
+const { response } = require("../utils/response");
+const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const Cryptr = require("cryptr");
 const { deleteFile } = require("../utils/deleteFile");
