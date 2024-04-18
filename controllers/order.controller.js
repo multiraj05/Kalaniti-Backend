@@ -1,7 +1,7 @@
 const { Order,cartDetails,userInfo,productInfo} = require("../models/index.model");
 const{ response }=require("../utils/response");
-const mongoose =require("mongoose")
-const {uniqueId} = require('../utils/generateCode')
+const mongoose =require("mongoose");
+const {uniqueId} = require('../utils/generateCode');
 
 exports.createOrder = async (req, res) => {
     try {

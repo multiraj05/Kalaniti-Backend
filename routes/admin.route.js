@@ -1,8 +1,8 @@
 const express = require("express");
 const route = express.Router();
 
-const AdminController = require("../controllers/admin.controller")
-const AdminMiddleware = require("../middlewares/admin.middleware")
+const AdminController = require("../controllers/admin.controller");
+const AdminMiddleware = require("../middlewares/admin.middleware");
 const checkAccessKey = require("../utils/checkAccessKey");
 
 const multer = require("multer");
