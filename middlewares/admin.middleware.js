@@ -16,6 +16,9 @@ module.exports = async (req, res, next) => {
       Authorization,
       process.env.JWT_SECRET
     );
+
+    console.log("decodeToken", decodeToken);  
+
     const admin = await Admin.findById(decodeToken._id);
     console.log("admin", admin);
 

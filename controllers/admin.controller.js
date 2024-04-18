@@ -109,7 +109,7 @@ exports.updatePassword = async (req, res) => {
     if (req.body.oldPassword || req.body.newPassword) {
       console.log("admin123", req.body);
 
-      const admin = await Admin.findById(req.admin._id).exec();
+      const admin = await Admin.findById(req.admin._id);
 
       if (!admin) {
         return response(res, 401, { message: "Admin not found" });
