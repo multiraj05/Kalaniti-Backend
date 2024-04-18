@@ -6,17 +6,16 @@ const { Admin } = require("../models/index.model");
 module.exports = async (req, res, next) => {
   try {
     const Authorization = req.get("Authorization");
+    console.log("Authorization ", Authorization);
 
     if (!Authorization || Authorization == undefined) {
       return response(res, 401, { message: "Oops ! You are not Authorized" })
     }
-
+  console.log("Authorization", Authorization);
     const decodeToken = await jwt.verify(
       Authorization,
       process.env.JWT_SECRET
     );
-
-
     const admin = await Admin.findById(decodeToken._id);
 
     req.admin = admin;

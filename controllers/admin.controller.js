@@ -139,10 +139,10 @@ exports.update = async (req, res) => {
 //update admin password [Backend]
 exports.updatePassword = async (req, res) => {
     try {
-      const { id } = req.query
+      
       if (req.body.oldPassword || req.body.newPassword) {
         console.log("admin", req.admin);
-        const admin = await Admin.findById(id).exec();
+        const admin = await Admin.findById(req.admin._id).exec();
 
         if (!admin) {
           return response(res, 401, { message: "Admin not found" });
