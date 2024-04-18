@@ -44,13 +44,23 @@ exports.getCategories = async (req, res) => {
         const skip = page * limit;
         const { id } = req.query;
         const search = req.query.search;
-        const fieldsToSearch = ["name", "image"];
+        const fieldsToSearch = ["name","categoryId"];
 
         let matchQuery = {}; 
 
         if (id) {
             matchQuery = {
                 _id: new mongoose.Types.ObjectId(id)
+            };
+        }
+
+        if (search) {
+            matchQuery = {
+                $or: [
+                    ...fieldsToSearch.map(field => ({
+                        [field]: { $regex: search, $options: "i" }
+                    }))
+                ]
             };
         }
 
@@ -99,6 +109,7 @@ exports.getCategories = async (req, res) => {
         return response(res, 500, error.message || "Internal Server Error");
     }
 };
+
 
 
 exports.updateCategory = async (req, res) => {

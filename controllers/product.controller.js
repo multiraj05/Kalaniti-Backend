@@ -65,7 +65,7 @@ exports.getProducts = async (req, res) => {
       console.log(req.query);
       const skip = page * limit;
       const search = req.query.search;
-      const fieldsToSearch = ["name"];
+      const fieldsToSearch = ["title","productName","productCode","price1","price2","description"];  
 
       let matchQuery = {};
 
