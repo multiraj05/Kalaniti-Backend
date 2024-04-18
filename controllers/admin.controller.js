@@ -137,7 +137,7 @@ exports.update = async (req, res) => {
 };
 
 //update admin password [Backend]
-  exports.updatePassword = async (req, res) => {
+exports.updatePassword = async (req, res) => {
     try {
       const { id } = req.query
       if (req.body.oldPassword || req.body.newPassword) {
@@ -182,7 +182,7 @@ exports.update = async (req, res) => {
       console.log(error);
       return response(res, 500, error)
     }
-  };
+};
 
 //update admin profile image
 exports.updateImage = async (req, res) => {
