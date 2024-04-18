@@ -105,15 +105,15 @@ exports.update = async (req, res) => {
   try {
     const admin = await Admin.findById(req.admin._id);
 
-    if (!admin)
-
+    if (!admin){   
       return response(res, 401, { message: "Admin doesn't Exist!!" })
+    }
+
 
     admin.name = req.body.name;
     admin.email = req.body.email;
 
     await admin.save();
-
 
     const payload = {
       _id: admin._id,
