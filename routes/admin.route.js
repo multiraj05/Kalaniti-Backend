@@ -17,7 +17,7 @@ route.post("/login",checkAccessKey(), AdminController.adminLogin);
 
 route.patch("/updatePassword", AdminMiddleware, AdminController.updatePassword);
 route.patch("/update", AdminMiddleware, AdminController.update);
-route.get("/show", upload.single("image"), AdminController.adminGet);
+// route.get("/show", upload.single("image"), AdminController.adminGet);
 
 route.get("/password", upload.single("image"), AdminController.showPassword);
 

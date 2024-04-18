@@ -85,20 +85,20 @@ exports.adminLogin = async (req, res, next) => {
   }
 };
 
-exports.adminGet = async (req, res) => {
-  try {
-      const admin = await Admin.find()
-      return response(res, 200, {
-          message: "admin get Successfully !!",
-          admin,
-      });
+// exports.adminGet = async (req, res) => {
+//   try {
+//       const admin = await Admin.find()
+//       return response(res, 200, {
+//           message: "admin get Successfully !!",
+//           admin,
+//       });
 
-  } catch (error) {
-      console.log(error);
-      return response(res, 500, error);
-  }
+//   } catch (error) {
+//       console.log(error);
+//       return response(res, 500, error);
+//   }
 
-}
+// }
 
 //update admin profile email and name [Backend]
 exports.update = async (req, res) => {
