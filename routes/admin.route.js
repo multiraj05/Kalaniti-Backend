@@ -19,6 +19,6 @@ route.patch("/update", AdminMiddleware, AdminController.update);
 route.put("/updateImage",AdminMiddleware, upload.single("image"), AdminController.updateImage);
 
 
-route.get("/password", upload.single("image"), AdminController.showPassword);
+// route.get("/password", upload.single("image"), AdminController.showPassword);
 
 module.exports = route;
