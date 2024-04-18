@@ -36,7 +36,7 @@ exports.addAdmin=async(req,res)=>{
         console.error("Error adding admin:", error);
         return response( res, 500, { status: false, message: "Internal Server Error" });
       }
-}
+};
 
 exports.adminLogin = async (req, res, next) => {
   try {
