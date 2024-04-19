@@ -16,5 +16,8 @@ route.delete("/delete", checkAccessKey(), bannerController.delete);
 
 route.put("/status",checkAccessKey(),bannerController.enableDesableBanner);
 
+route.get("/showBanner", checkAccessKey(), bannerController.showBanner);
+
+
 
 module.exports = route;
