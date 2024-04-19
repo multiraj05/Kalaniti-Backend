@@ -110,8 +110,6 @@ exports.getCategories = async (req, res) => {
     }
 };
 
-
-
 exports.updateCategory = async (req, res) => {
     console.log("update data = ",req.body);
     console.log("categoryId = ",req.query);
@@ -140,7 +138,7 @@ exports.updateCategory = async (req, res) => {
     } catch (error) {
       return response( res, 500, { success: false, message:  error.message || "Internal Server Error" });
     }
-  };
+};
 
 exports.deleteCategory = async (req, res) => {
     try {
@@ -157,4 +155,4 @@ exports.deleteCategory = async (req, res) => {
       console.error(error);
       return response( res, 500, { success: false, message: "Could not delete cart data!" });
     }
-  };
+};

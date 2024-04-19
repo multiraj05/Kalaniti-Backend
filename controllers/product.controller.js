@@ -345,3 +345,61 @@ exports.enableDisableTrend = async (req, res) => {
       });
     }
 };
+
+
+exports.showProduct = async (req, res) => {
+  try {
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = page * limit;
+      const search = req.query.search;
+      const fieldsToSearch = ["image", "title", "url"];
+
+
+      const matchQuery = {
+          $and: [
+              { isTrend: true }, 
+              {
+                  $or: fieldsToSearch.map((field) => ({
+                      [field]: { $regex: search, $options: "i" },
+                  })),
+              },
+          ],
+      };
+
+      const commonPipeline = [
+          {
+              $match: matchQuery,
+          },
+      ];
+
+      const countPipeline = [...commonPipeline, { $count: "totalCount" }];
+      const aggregationPipeline = [
+          ...commonPipeline,
+          { $skip: skip },
+          { $limit: limit },
+          { $sort: { createdAt: -1 } },
+      ];
+
+
+      const countResult = await productInfo.aggregate(countPipeline);
+      const totalCount = countResult[0]?.totalCount || 0;
+
+      const Result = await productInfo.aggregate(aggregationPipeline);
+      const paginatedResults = Result || [];
+
+      return response(res, 200, {
+          status: true,
+          message: "productInfo reterived Successfully !!",
+          products: paginatedResults,
+          productsTotal: totalCount,
+      });
+  } catch (error) {
+      console.log("productInfo show error = ",error);
+      return response(res, 500 ,
+      {
+          status: false,
+          message: "Internal Server Error"
+      })
+  }
+}

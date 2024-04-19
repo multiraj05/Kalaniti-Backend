@@ -15,4 +15,7 @@ route.get("/showProduct",productController.getProductsById);
 
 route.put('/status',productController.enableDisableTrend);
 
+route.get("/isTrend",productController.showProduct);
+
+
 module.exports = route;
