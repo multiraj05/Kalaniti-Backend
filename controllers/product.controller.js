@@ -130,6 +130,7 @@ exports.getProducts = async (req, res) => {
                   category: "$category.name",
                   productCode: 1,
                   createdAt: 1,
+                  isTrend:1
               },
           }
       ];
