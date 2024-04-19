@@ -171,7 +171,7 @@ exports.updateProduct = async (req, res) => {
 
   try {
     const {id} = req.query;
-    const { productName, price1, price2 , title, description} = req.body;
+    const { productName, price1, price2 , title, description,categoryId} = req.body;
 
     const product = await productInfo.findById(id);
 
@@ -200,6 +200,7 @@ exports.updateProduct = async (req, res) => {
     product.price1 = price1 || product.price1;
     product.price2 = price2 || product.price2;
     product.description = description || product.description;
+    product.categoryId = categoryId || product.categoryId;
     // product.images = req.files.map((file) => file.path) || product.images;
 
     await product.save();
