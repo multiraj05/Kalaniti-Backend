@@ -2,7 +2,6 @@ const { categoryInfo } = require("../models/index.model");
 const{response}=require("../utils/response");
 const mongoose=require("mongoose")
 const {uniqueId} = require('../utils/generateCode.js');
-const { $where } = require("../models/cart.model.js");
 
 exports.createCategory = async (req, res) => {
     console.log("Category Image = ", req.file);
