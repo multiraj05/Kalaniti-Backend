@@ -4,7 +4,7 @@ const fs = require("fs");
 const { response } = require("../utils/response");
 const { ObjectId } = mongoose.Types;
 const {uniqueId} = require('../utils/generateCode');
-const {deleteFilesPath}=require('../utils/deleteFile.js')
+const {deleteFilesPath}=require('../utils/deleteFile.js');
 
 exports.addProduct = async (req, res) => {
   try {
