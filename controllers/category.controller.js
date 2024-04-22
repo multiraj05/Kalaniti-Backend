@@ -29,7 +29,7 @@ exports.createCategory = async (req, res) => {
 
         await category.save();
 
-        return response( res, 200, { status: true, message: 'Category created successfully', category });
+        return response( res, 200, { status: true, message: 'Category created successfully', categories:category });
     } catch (error) {
         console.error(error);
         return response( res, 500, { status: false, message: 'Internal server error' });
@@ -132,7 +132,7 @@ exports.updateCategory = async (req, res) => {
       return response( res, 200, {
         success: true,
         message: "Category updated successfully!",
-        category: updatedCategory,
+        categories: updatedCategory,
       });
     } catch (error) {
       return response( res, 500, { success: false, message:  error.message || "Internal Server Error" });
