@@ -348,7 +348,6 @@ exports.enableDisableTrend = async (req, res) => {
     }
 };
 
-
 exports.showProduct = async (req, res) => {
   try {
       const page = parseInt(req.query.page) || 0;
