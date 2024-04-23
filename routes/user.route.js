@@ -25,7 +25,6 @@ route.post('/send-reset-password-email', checkKey(),userController.sendUserPassw
 route.post('/changepassword', userController.changeUserPassword);
 route.post('/reset-password',checkKey(),userController.userPasswordReset);
 
-
 // admin user route
 route.post('/create',upload.single("image"),userController.addUser);
 route.patch('/updateUser',upload.single("image"),userController.userUpdate);
