@@ -1,4 +1,4 @@
-const { Order,cartDetails,userInfo,productInfo} = require("../models/index.model");
+const { Order,cartDetails,userInfo} = require("../models/index.model");
 const{ response }=require("../utils/response");
 const mongoose =require("mongoose");
 const {uniqueId} = require('../utils/generateCode');

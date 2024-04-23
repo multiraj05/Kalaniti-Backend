@@ -32,7 +32,6 @@ route.patch('/updateUser',upload.single("image"),userController.userUpdate);
 route.delete('/deleteUser',userController.deleteUser);
 
 // show password route
-
 route.get('/showPassword',userController.showPassword);
 
 

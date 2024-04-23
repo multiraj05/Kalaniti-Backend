@@ -1,6 +1,5 @@
-const { productInfo, categoryInfo } = require("../models/index.model");
+const { productInfo } = require("../models/index.model");
 const mongoose = require("mongoose");
-const fs = require("fs");
 const { response } = require("../utils/response");
 const { ObjectId } = mongoose.Types;
 const {uniqueId} = require('../utils/generateCode');
