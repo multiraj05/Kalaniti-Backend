@@ -10,7 +10,7 @@ const fs = require("fs");
 
 const Cryptr = require("cryptr");
 require('dotenv').config();
-const cryptrKey = process.env.CRYPTR_KEY;
+const cryptrKey = process.env.CRYPTR_KEY;4
 const cryptr = new Cryptr(cryptrKey);
 
 // --------------------- start user login & registration --------------------------

@@ -161,7 +161,7 @@ exports.getOrders = async (req, res) => {
         return response(res, 200, {
             message: "Orders retrieved successfully!",
             order: paginatedResults,
-            orderTotal: totalCount,
+            ordersTotal: totalCount,
         });
     } catch (error) {
         console.error("Error fetching orders:", error);
@@ -356,7 +356,7 @@ exports.pendingStatus = async (req, res) => {
         return res.status(200).json({
             message: "Pending orders retrieved successfully!",
             order: paginatedResults,
-            orderTotal: totalCount,
+            ordersTotal: totalCount,
         });
     } catch (error) {
         console.error("Error fetching pending orders:", error);
@@ -460,7 +460,7 @@ exports.confirmedStatus = async (req, res) => {
         return res.status(200).json({
             message: "confirmed orders retrieved successfully!",
             order: paginatedResults,
-            orderTotal: totalCount,
+            ordersTotal: totalCount,
         });
     } catch (error) {
         console.error("Error fetching confirmed orders:", error);
@@ -564,7 +564,7 @@ exports.deliveredStatus = async (req, res) => {
         return res.status(200).json({
             message: "delivered orders retrieved successfully!",
             order: paginatedResults,
-            orderTotal: totalCount,
+            ordersTotal: totalCount,
         });
     } catch (error) {
         console.error("Error fetching delivered orders:", error);
@@ -668,7 +668,7 @@ exports.canceledStatus = async (req, res) => {
         return res.status(200).json({
             message: "canceled orders retrieved successfully!",
             order: paginatedResults,
-            orderTotal: totalCount,
+            ordersTotal: totalCount,
         });
     } catch (error) {
         console.error("Error fetching canceled orders:", error);
@@ -772,7 +772,7 @@ exports.returnStatus = async (req, res) => {
         return res.status(200).json({
             message: "return orders retrieved successfully!",
             order: paginatedResults,
-            orderTotal: totalCount,
+            ordersTotal: totalCount,
         });
     } catch (error) {
         console.error("Error fetching return orders:", error);
