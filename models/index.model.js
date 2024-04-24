@@ -7,3 +7,4 @@ exports.Order = require("./order.model");
 exports.Banner = require("./banner.model");
 exports.Attribute = require("./attribute.model");
 exports.Policy = require("./policy.model");
+exports.Setting = require("./setting.model");
