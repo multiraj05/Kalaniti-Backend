@@ -25,6 +25,12 @@ route.use("/payment", paymentRoute);
 const Banner = require("./banner.route");
 route.use("/banner", Banner);
 
+const attributeRoute = require("./attribute.route");
+route.use("/attribute", attributeRoute);
+
+const policyRoute = require("./policy.route");
+route.use("/policy", policyRoute);
+
 // ------------------ end users route ---------------
 
 // ------------------ start admin route ---------------
