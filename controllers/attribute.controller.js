@@ -133,3 +133,20 @@ exports.updateAttribute = async (req, res) => {
         return response(res, 500, { success: false, message: error.message || "Internal Server Error" });
     }
 };
+
+exports.deleteAttribute = async (req, res) => {
+    try {
+      const { id } = req.query;
+  
+      const deleteAttribute = await Attribute.findByIdAndDelete(id);
+  
+      if (!deleteAttribute) {
+        return response( res, 401, { success: false, message: "Attribute not found!" });
+      }
+  
+      return response( res, 200, { success: true, message: "Attribute deleted successfully!", deleteAttribute });
+    } catch (error) {
+      console.error(error);
+      return response( res, 500, { success: false, message: "Could not delete Attribute data!" });
+    }
+};

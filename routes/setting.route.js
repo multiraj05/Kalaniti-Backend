@@ -8,6 +8,9 @@ const storage = require("../utils/multer");
 const upload = multer({storage});
 
 route.post("/create",upload.any(),checkAccessKey(), settingController.addSetting);
+route.get("/show", checkAccessKey(), settingController.getSetting);
+route.patch("/update",upload.any(),checkAccessKey(), settingController.updateSetting);
+route.delete("/delete",checkAccessKey(), settingController.deleteSetting);
 
 
 module.exports = route;
