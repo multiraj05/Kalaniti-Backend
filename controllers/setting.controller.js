@@ -49,7 +49,7 @@ exports.addSetting = async (req,res) => {
             msg:"Internal server error"
         })
     }
-}
+};
 
 exports.getSetting = async (req,res) => {
     try {
@@ -112,7 +112,7 @@ exports.getSetting = async (req,res) => {
             message: "Internal server error",
         });
     }
-}
+};
 
 exports.updateSetting = async (req, res) => {
     console.log("Setting Data = ",req.body);
