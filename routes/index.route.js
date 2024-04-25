@@ -34,6 +34,9 @@ route.use("/policy", policyRoute);
 const settingRoute = require("./setting.route");
 route.use("/setting", settingRoute);
 
+const contactUsRoute = require("./contactUs.route");
+route.use("/contactUs", contactUsRoute);
+
 // ------------------ end users route ---------------
 
 // ------------------ start admin route ---------------
