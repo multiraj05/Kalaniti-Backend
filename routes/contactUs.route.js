@@ -3,9 +3,9 @@ const route = express.Router();
 const contactUsController = require("../controllers/contactUs.controller");
 const checkAccessKey = require("../utils/checkAccessKey");
 
-route.post("/create",checkAccessKey(), contactUsController.addContactUs);
-route.get("/show", checkAccessKey(),contactUsController.getContactUs);
-route.patch("/update",checkAccessKey(), contactUsController.updateContactUs);
-route.delete("/delete",checkAccessKey(), contactUsController.deleteContactUs);
+route.post("/create", contactUsController.addContactUs);
+route.get("/show", contactUsController.getContactUs);
+route.patch("/update", contactUsController.updateContactUs);
+route.delete("/delete", contactUsController.deleteContactUs);
 
 module.exports = route;

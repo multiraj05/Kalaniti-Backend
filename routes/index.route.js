@@ -35,7 +35,7 @@ const settingRoute = require("./setting.route");
 route.use("/setting", settingRoute);
 
 const contactUsRoute = require("./contactUs.route");
-route.use("/contactUs", contactUsRoute);
+route.use("/contact", contactUsRoute);
 
 // ------------------ end users route ---------------
 
